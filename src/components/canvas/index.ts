@@ -1,0 +1,9 @@
+export { CanvasContainer } from './CanvasContainer';
+export { WelcomeState } from './WelcomeState';
+export { BioCard } from './BioCard';
+export { ExperienceTimeline } from './ExperienceTimeline';
+export { ProjectGrid } from './ProjectGrid';
+export { ProjectCard } from './ProjectCard';
+export { EducationList } from './EducationList';
+export { SkillsMatrix } from './SkillsMatrix';
+export { ContactSection } from './ContactSection';

@@ -1,1 +1,1 @@
-# ai-portfolio-claude
+# AI-Powered Portfolio Web App
