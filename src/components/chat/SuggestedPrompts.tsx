@@ -18,7 +18,6 @@ interface SuggestedPromptsProps {
 export function SuggestedPrompts({ onSelect, className }: SuggestedPromptsProps) {
   return (
     <div className={cn('px-4 py-3', className)}>
-      <p className="text-xs text-gray-500 mb-2">Suggested questions:</p>
       <div className="flex flex-wrap gap-2">
         {SUGGESTED_PROMPTS.map(({ label, prompt, icon }, index) => (
           <motion.button

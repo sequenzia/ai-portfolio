@@ -32,8 +32,8 @@ export function ChatContainer() {
       {/* Message list */}
       <MessageList messages={messages} isLoading={isLoading} />
 
-      {/* Suggested prompts when empty */}
-      {showWelcome && <SuggestedPrompts onSelect={handlePromptSelect} />}
+      {/* Suggested prompts - always visible */}
+      <SuggestedPrompts onSelect={handlePromptSelect} />
 
       {/* Input */}
       <ChatInput

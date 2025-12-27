@@ -54,7 +54,7 @@ export function WelcomeState() {
           transition={{ duration: 0.5, delay: 0.5 }}
           className="text-gray-500 mb-8"
         >
-          Start a conversation with my AI assistant to explore my experience,
+          Start a conversation with my AI Agent to explore my experience,
           projects, and skills. Content will appear here as we chat.
         </motion.p>
 

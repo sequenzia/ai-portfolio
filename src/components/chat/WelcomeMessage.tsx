@@ -21,7 +21,7 @@ export function WelcomeMessage() {
         <div className="flex-1">
           <div className="bg-message-assistant rounded-2xl rounded-tl-sm px-4 py-3">
             <p className="text-gray-900 mb-3">
-              Hi! I'm an AI assistant for <strong>{bio.name}'s</strong> portfolio.
+              Hi! I'm an AI Agent for <strong>{bio.name}'s</strong> portfolio.
             </p>
             <p className="text-gray-700 text-sm mb-3">
               I'm here to help you learn about {bio.name}'s professional background,
