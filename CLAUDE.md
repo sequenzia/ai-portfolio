@@ -58,16 +58,20 @@ Tool definitions: `src/lib/ai/tools.ts` (frontend schema) and `api/chat.py` (bac
 - **Canvas state**: Zustand store in `src/stores/canvasStore.ts` - tracks current view, filter, and navigation history
 
 ### Content Configuration
-Portfolio data is typed TypeScript config in `src/content/portfolio.ts`. System prompt in `api/chat.py` also contains portfolio content for the LLM.
+Portfolio data is stored in a single markdown file: `content/portfolio.md`. Both frontend and backend read from this file:
+- Frontend: Parsed at build time via `src/content/parsePortfolio.ts`
+- Backend: Parsed at runtime via `api/parse_portfolio.py`
 
 ## Key Files
 
+- `content/portfolio.md` - **Single source of truth** for all portfolio content
+- `src/content/parsePortfolio.ts` - TypeScript parser for portfolio markdown
+- `src/content/portfolio.ts` - Exports parsed portfolio content for frontend
+- `api/parse_portfolio.py` - Python parser for portfolio markdown
 - `src/hooks/usePortfolioChat.ts` - Wraps `useChat`, handles `renderCanvas` tool calls
 - `src/stores/canvasStore.ts` - Zustand store for canvas view state
 - `src/lib/ai/tools.ts` - Zod schema for `renderCanvas` tool
-- `src/lib/ai/prompts.ts` - System prompt generation (frontend reference)
 - `api/chat.py` - FastAPI streaming endpoint with OpenAI tool calling
-- `src/content/portfolio.ts` - Portfolio data (bio, experience, projects, etc.)
 
 ## Path Alias
 

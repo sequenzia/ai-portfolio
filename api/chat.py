@@ -9,6 +9,8 @@ from openai import OpenAI
 from openai.types.responses import ResponseInputParam, FunctionToolParam
 from dotenv import load_dotenv
 
+from .parse_portfolio import load_portfolio_content
+
 load_dotenv(".env.local")  # Load environment variables from .env file
 
 app = FastAPI()
@@ -22,91 +24,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Portfolio content
-portfolio_content = {
-    "bio": {
-        "name": "Alex Johnson",
-        "title": "Senior Full-Stack Engineer",
-        "location": "San Francisco, CA",
-        "summary": "Passionate software engineer with 8+ years of experience building scalable web applications and AI-powered systems. I specialize in React, TypeScript, and distributed systems, with a focus on creating intuitive user experiences that delight users and drive business results.",
-        "highlights": [
-            "Led development of AI systems processing 1M+ requests daily",
-            "Open source contributor with 5k+ GitHub stars across projects",
-            "Speaker at ReactConf 2024 and AI Summit 2023",
-            "Expertise in system design and microservices architecture",
-        ],
-    },
-    "experience": [
-        {
-            "role": "Senior Software Engineer",
-            "company": "TechCorp AI",
-            "duration": "2022-01 - Present",
-            "description": "Leading development of AI-powered features for enterprise customers. Reduced inference latency by 40%, architected microservices serving 10M DAU.",
-            "technologies": ["Python", "TypeScript", "React", "Kubernetes", "TensorFlow"],
-        },
-        {
-            "role": "Full-Stack Engineer",
-            "company": "StartupXYZ",
-            "duration": "2019-06 - 2021-12",
-            "description": "Built core B2B SaaS platform features. Reduced page load by 60%, established CI/CD reducing deployment from hours to minutes.",
-            "technologies": ["React", "Node.js", "PostgreSQL", "Redis", "AWS"],
-        },
-        {
-            "role": "Frontend Developer",
-            "company": "WebAgency Co",
-            "duration": "2016-08 - 2019-05",
-            "description": "Developed 20+ client projects across e-commerce, healthcare, finance. Led accessibility initiatives achieving WCAG AA compliance.",
-            "technologies": ["JavaScript", "React", "Vue.js", "SCSS"],
-        },
-    ],
-    "projects": [
-        {
-            "name": "AI Assistant Platform",
-            "category": "ai",
-            "description": "Enterprise conversational AI platform with custom training, processing 500k+ conversations monthly.",
-            "technologies": ["React", "Python", "FastAPI", "LangChain", "PostgreSQL"],
-            "featured": True,
-        },
-        {
-            "name": "Real-time Collaboration SDK",
-            "category": "open-source",
-            "description": "Open-source CRDT library for building collaborative apps. Used by 500+ projects.",
-            "technologies": ["TypeScript", "WebSockets", "Yjs", "Redis"],
-            "featured": True,
-        },
-        {
-            "name": "DevOps Dashboard",
-            "category": "devops",
-            "description": "Unified monitoring dashboard integrating Kubernetes, Prometheus, CI/CD. Reduced MTTR by 40%.",
-            "technologies": ["React", "Go", "Kubernetes", "Prometheus"],
-            "featured": False,
-        },
-    ],
-    "education": [
-        {
-            "degree": "M.S. Computer Science (AI Specialization)",
-            "institution": "Stanford University",
-            "years": "2014-2016",
-        },
-        {
-            "degree": "B.S. EECS",
-            "institution": "UC Berkeley",
-            "years": "2010-2014",
-            "honors": "Magna Cum Laude",
-        },
-    ],
-    "skills": {
-        "languages": ["TypeScript", "Python", "JavaScript", "Go", "SQL"],
-        "frontend": ["React", "Next.js", "Tailwind CSS", "Framer Motion"],
-        "backend": ["Node.js", "PostgreSQL", "Redis", "Kubernetes", "AWS", "Docker"],
-        "ai": ["LLM Integration", "Prompt Engineering", "LangChain", "TensorFlow"],
-    },
-    "contact": {
-        "email": "alex@example.com",
-        "calendly": "https://calendly.com/alexjohnson/30min",
-        "social": ["GitHub", "LinkedIn", "Twitter"],
-    },
-}
+# Load portfolio content from the single-source-of-truth markdown file
+portfolio_content = load_portfolio_content()
 
 
 def generate_system_prompt() -> str:
@@ -236,10 +155,12 @@ async def stream_response(messages: list[dict]):
             for msg in messages
         ]
 
+        system_prompt = generate_system_prompt()
+
         # Use Responses API with streaming
         with client.responses.create(
             model="gpt-4o-mini",
-            instructions=generate_system_prompt(),
+            instructions=system_prompt,
             input=input_messages,
             tools=tools,
             stream=True,
