@@ -4,96 +4,81 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is an AI-powered portfolio web application where visitors interact with an intelligent chatbot to explore the portfolio owner's professional background. Instead of static pages, users converse with an AI agent that dynamically renders relevant content in a "canvas" area.
+AI-powered portfolio web application where visitors interact with a chatbot to explore the portfolio owner's professional background. Two main panels: Chat (40%) for conversation, Canvas (60%) for dynamically rendered portfolio content triggered by AI tool calls.
 
-## Technology Stack
+## Commands
 
-- **Build Tool:** Vite
-- **Framework:** React 18+
-- **Language:** TypeScript
-- **Styling:** Tailwind CSS
-- **Animation:** Framer Motion
-- **AI SDK:** Vercel AI SDK (useChat hook, tool calling, streaming)
-- **AI Gateway:** Vercel AI Gateway
-- **State Management:** React Context + Zustand
-- **Deployment:** Vercel
+### Frontend (Vite + React)
+```bash
+npm run dev          # Start dev server on port 5173
+npm run build        # TypeScript check + Vite production build
+npm run lint         # ESLint
+npm run preview      # Preview production build
+npm run test         # Run Vitest tests
+npm run test:ui      # Vitest with UI
+npm run test:coverage # Vitest with coverage
+```
+
+### Backend (Python FastAPI)
+```bash
+# Setup (using uv package manager)
+uv sync              # Install dependencies from pyproject.toml
+
+# Run API server
+uv run uvicorn api.chat:app --reload --port 3001
+
+# Or without uv
+pip install -e .
+uvicorn api.chat:app --reload --port 3001
+```
+
+### Full Stack Development
+Run both frontend and backend simultaneously:
+- Frontend: `npm run dev` (port 5173)
+- Backend: `uv run uvicorn api.chat:app --reload --port 3001`
 
 ## Architecture
 
-The application has two main panels:
-1. **Chat Panel (40%):** Conversational interface using Vercel AI SDK's `useChat` hook with streaming responses
-2. **Canvas Panel (60%):** Dynamic content area that renders portfolio content (Bio, Experience, Projects, Education, Skills, Contact) based on AI agent tool calls
-
-Key architectural decisions:
-- AI agent uses **tool calling** (not natural language parsing) to emit structured canvas commands via `renderCanvas` tool
-- Portfolio content stored as **typed TypeScript configuration** in `src/content/portfolio.ts` (not a database)
-- All LLM requests route through **Vercel AI Gateway** for model abstraction and fallbacks
-- Responses stream while canvas commands execute immediately on tool invocation
-
-## Expected Project Structure
-
-```
-src/
-├── components/
-│   ├── chat/          # ChatContainer, MessageList, Message, ChatInput, TypingIndicator
-│   ├── canvas/        # CanvasContainer, BioCard, ExperienceTimeline, ProjectGrid, etc.
-│   ├── layout/        # AppLayout, Header, MobileToggle
-│   └── ui/            # Shared UI primitives (Button, Card, Badge)
-├── hooks/             # usePortfolioChat, useCanvasState, useMediaQuery
-├── lib/
-│   ├── ai/            # tools.ts (tool definitions), prompts.ts (system prompts)
-│   └── utils/         # cn.ts (class name utility)
-├── content/           # portfolio.ts (data), types.ts (content type definitions)
-├── api/chat/          # route.ts (API handler)
-├── stores/            # canvasStore.ts (Zustand)
-├── App.tsx
-├── main.tsx
-└── index.css
-```
-
-## Key Implementation Patterns
+### Data Flow
+1. User sends message → `usePortfolioChat` hook (Vercel AI SDK's `useChat`)
+2. Request to `/api/chat` → FastAPI backend (`api/chat.py`)
+3. Backend streams OpenAI response with tool calls
+4. `onToolCall` handler in `usePortfolioChat` receives `renderCanvas` tool calls
+5. Canvas state updated via Zustand store → Canvas re-renders appropriate component
 
 ### Tool Calling for Canvas
+The AI uses the `renderCanvas` tool to trigger canvas updates:
 ```typescript
-const tools = {
-  renderCanvas: {
-    description: "Render content in the canvas area",
-    parameters: z.object({
-      type: z.enum(["bio", "experience", "projects", "education", "skills", "contact"]),
-      filter: z.string().optional(),
-      highlightId: z.string().optional(),
-    }),
-  },
-};
+renderCanvas({ type: "bio" | "experience" | "projects" | "education" | "skills" | "contact", filter?: string, highlightId?: string })
+```
+Tool definitions: `src/lib/ai/tools.ts` (frontend schema) and `api/chat.py` (backend OpenAI function)
+
+### State Management
+- **Chat state**: Managed by Vercel AI SDK's `useChat` hook in `usePortfolioChat.ts`
+- **Canvas state**: Zustand store in `src/stores/canvasStore.ts` - tracks current view, filter, and navigation history
+
+### Content Configuration
+Portfolio data is typed TypeScript config in `src/content/portfolio.ts`. System prompt in `api/chat.py` also contains portfolio content for the LLM.
+
+## Key Files
+
+- `src/hooks/usePortfolioChat.ts` - Wraps `useChat`, handles `renderCanvas` tool calls
+- `src/stores/canvasStore.ts` - Zustand store for canvas view state
+- `src/lib/ai/tools.ts` - Zod schema for `renderCanvas` tool
+- `src/lib/ai/prompts.ts` - System prompt generation (frontend reference)
+- `api/chat.py` - FastAPI streaming endpoint with OpenAI tool calling
+- `src/content/portfolio.ts` - Portfolio data (bio, experience, projects, etc.)
+
+## Path Alias
+
+`@/*` maps to `./src/*` (configured in tsconfig.json and vite.config.ts)
+
+## Environment Variables
+
+Create `.env.local`:
+```bash
+OPENAI_API_KEY=sk-...
 ```
 
-### Content Types
-Portfolio data uses strongly typed interfaces: `BioContent`, `ExperienceItem`, `ProjectItem`, `EducationItem`, `SkillCategory`, `ContactInfo`. See PRD section 8.1 for full type definitions.
-
-### Canvas State
-```typescript
-type CanvasViewType = "welcome" | "bio" | "experience" | "projects" | "education" | "skills" | "contact";
-```
-
-## Responsive Layout
-
-- **Desktop (≥1024px):** Side-by-side split (Chat 40%, Canvas 60%)
-- **Tablet (768-1023px):** Configurable split or stacked
-- **Mobile (<768px):** Stacked with toggle between chat and canvas views
-
-## Performance Targets
-
-- LCP: < 2.5s
-- TTI: < 3.5s
-- First AI token: < 500ms
-- Bundle size (gzipped): < 200KB
-- CLS: < 0.1
-
-## Testing
-
-- **Unit:** Vitest (80% coverage for utilities, hooks)
-- **Component:** React Testing Library
-- **Integration/E2E:** Playwright
-
-## **More Information**
-Review [requirements.md](requirements.md) for more information.
+## More Information
+See [requirements.md](requirements.md) for detailed PRD including content types, API design, and UI specifications.
