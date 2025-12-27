@@ -190,7 +190,7 @@ tools: list[FunctionToolParam] = [
     {
         "type": "function",
         "name": "renderCanvas",
-        "strict": True,
+        "strict": False,
         "description": "Display content in the canvas area of the portfolio. Use when the user asks about specific content areas or wants to see visual content.",
         "parameters": {
             "type": "object",
