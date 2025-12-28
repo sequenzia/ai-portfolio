@@ -1,28 +1,17 @@
 import json
 from typing import cast
 
-from fastapi import FastAPI
 from fastapi.responses import StreamingResponse
-from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from openai import OpenAI
 from openai.types.responses import ResponseInputParam, FunctionToolParam
 from dotenv import load_dotenv
 
-from .parse_portfolio import load_portfolio_content
+from .utils import load_portfolio_content
 
-load_dotenv(".env.local")  # Load environment variables from .env file
 
-app = FastAPI()
+load_dotenv(".env.local")
 
-# CORS middleware for frontend access
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
 
 # Load portfolio content from the single-source-of-truth markdown file
 portfolio_content = load_portfolio_content()
@@ -134,9 +123,30 @@ tools: list[FunctionToolParam] = [
 ]
 
 
+class MessagePart(BaseModel):
+    type: str
+    text: str | None = None
+    # Tool result fields (for tool-* type parts)
+    toolCallId: str | None = None
+    toolName: str | None = None
+    state: str | None = None
+    input: dict | None = None
+    output: str | None = None
+
+
 class Message(BaseModel):
     role: str
-    content: str
+    parts: list[MessagePart]
+    id: str | None = None
+
+    @property
+    def content(self) -> str:
+        """Extract text content from parts, ignoring tool result parts."""
+        text_parts = []
+        for part in self.parts:
+            if part.type == "text" and part.text:
+                text_parts.append(part.text)
+        return "".join(text_parts)
 
 
 class ChatRequest(BaseModel):
@@ -146,16 +156,25 @@ class ChatRequest(BaseModel):
 client = OpenAI()
 
 
+def generate_message_id():
+    """Generate a unique message ID."""
+    import uuid
+    return f"msg_{uuid.uuid4().hex[:24]}"
+
+
 async def stream_response(messages: list[dict]):
-    """Stream the OpenAI response using Responses API with Vercel AI SDK format."""
+    """Stream the OpenAI response using Responses API with Vercel AI SDK v5/v6 format."""
     try:
         # Convert messages to Responses API input format
         input_messages: ResponseInputParam = [
-            {"role": cast(str, msg["role"]), "content": msg["content"]}  # type: ignore[misc]
+            # type: ignore[misc]
+            {"role": cast(str, msg["role"]), "content": msg["content"]}
             for msg in messages
         ]
 
         system_prompt = generate_system_prompt()
+        message_id = generate_message_id()
+        text_id = f"text_{message_id}"
 
         # Use Responses API with streaming
         with client.responses.create(
@@ -165,63 +184,62 @@ async def stream_response(messages: list[dict]):
             tools=tools,
             stream=True,
         ) as response:
-            # Track tool calls being built up
-            current_tool_calls = {}
+            # Track if we've started text output
+            text_started = False
 
             for event in response:
                 # Handle text delta events
                 if event.type == "response.output_text.delta":
-                    yield f"0:{json.dumps(event.delta)}\n"
-
-                # Handle function call arguments delta
-                elif event.type == "response.function_call_arguments.delta":
-                    call_id = event.item_id
-                    if call_id not in current_tool_calls:
-                        current_tool_calls[call_id] = {"args": ""}
-                    current_tool_calls[call_id]["args"] += event.delta
+                    if not text_started:
+                        # Send text start event
+                        yield f"data: {json.dumps({'type': 'text-start', 'id': text_id})}\n\n"
+                        text_started = True
+                    # Send text delta
+                    yield f"data: {json.dumps({'type': 'text-delta', 'id': text_id, 'textDelta': event.delta})}\n\n"
 
                 # Handle new output items (including function calls)
                 elif event.type == "response.output_item.added":
                     if event.item.type == "function_call":
                         call_id = event.item.id
-                        current_tool_calls[call_id] = {
-                            "name": event.item.name,
-                            "args": "",
-                        }
+                        # Send tool input start
+                        yield f"data: {json.dumps({'type': 'tool-input-start', 'toolCallId': call_id, 'toolName': event.item.name})}\n\n"
+
+                # Handle function call arguments delta
+                elif event.type == "response.function_call_arguments.delta":
+                    call_id = event.item_id
+                    # Send tool input delta
+                    yield f"data: {json.dumps({'type': 'tool-input-delta', 'toolCallId': call_id, 'inputTextDelta': event.delta})}\n\n"
 
                 # Handle completed output items
                 elif event.type == "response.output_item.done":
                     if event.item.type == "function_call":
                         call_id = event.item.id
                         # Parse arguments from JSON string to object
-                        args = json.loads(event.item.arguments) if event.item.arguments else {}
-                        tool_data = {
-                            "toolCallId": call_id,
-                            "toolName": event.item.name,
-                            "args": args,
-                        }
-                        yield f"9:{json.dumps(tool_data)}\n"
+                        args = json.loads(
+                            event.item.arguments) if event.item.arguments else {}
+                        # Send tool input available (this triggers onToolCall)
+                        yield f"data: {json.dumps({'type': 'tool-input-available', 'toolCallId': call_id, 'toolName': event.item.name, 'input': args})}\n\n"
 
                 # Handle response completion
                 elif event.type == "response.completed":
-                    finish_reason = "stop"
-                    # Check if there were tool calls
-                    if any(
-                        item.type == "function_call"
-                        for item in event.response.output
-                    ):
-                        finish_reason = "tool-calls"
-                    yield f"d:{json.dumps({'finishReason': finish_reason})}\n"
+                    # Send text end if we started text
+                    if text_started:
+                        yield f"data: {json.dumps({'type': 'text-end', 'id': text_id})}\n\n"
+                    # Send done signal
+                    yield "data: [DONE]\n\n"
 
     except Exception as e:
-        error_data = {"error": str(e)}
-        yield f"3:{json.dumps(error_data)}\n"
+        error_data = {"type": "error", "error": str(e)}
+        yield f"data: {json.dumps(error_data)}\n\n"
+        yield "data: [DONE]\n\n"
 
 
-@app.post("/api/chat")
-async def chat(request: ChatRequest):
+async def root(request: ChatRequest):
     """Handle chat requests with streaming responses."""
-    messages = [{"role": msg.role, "content": msg.content} for msg in request.messages]
+    messages = [{"role": msg.role, "content": msg.content}
+                for msg in request.messages]
+
+    print(f"Received messages: {messages}")
 
     return StreamingResponse(
         stream_response(messages),
@@ -230,16 +248,6 @@ async def chat(request: ChatRequest):
             "Cache-Control": "no-cache",
             "Connection": "keep-alive",
             "X-Accel-Buffering": "no",
+            "x-vercel-ai-ui-message-stream": "v1",
         },
     )
-
-
-@app.get("/health")
-async def health():
-    """Health check endpoint."""
-    return {"status": "ok"}
-
-
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=3001)

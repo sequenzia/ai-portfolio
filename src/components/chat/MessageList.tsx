@@ -1,14 +1,24 @@
 import { useEffect, useRef } from 'react';
 import { AnimatePresence } from 'framer-motion';
-import type { Message as MessageType } from 'ai';
+import type { UIMessage } from 'ai';
 import { UserMessage, AssistantMessage } from './Message';
 import { TypingIndicator } from './TypingIndicator';
 import { cn } from '@/lib/utils/cn';
 
 interface MessageListProps {
-  messages: MessageType[];
+  messages: UIMessage[];
   isLoading?: boolean;
   className?: string;
+}
+
+/**
+ * Extract text content from a UIMessage's parts array
+ */
+function getMessageText(message: UIMessage): string {
+  return message.parts
+    .filter((part): part is { type: 'text'; text: string } => part.type === 'text')
+    .map((part) => part.text)
+    .join('');
 }
 
 export function MessageList({ messages, isLoading, className }: MessageListProps) {
@@ -30,22 +40,25 @@ export function MessageList({ messages, isLoading, className }: MessageListProps
         className
       )}
     >
-      <AnimatePresence mode="popLayout">
+      <AnimatePresence mode="sync">
         {messages.map((message) => {
-          // Skip system messages and data messages
-          if (message.role === 'system' || message.role === 'data') {
+          // Skip system messages
+          if (message.role === 'system') {
             return null;
           }
 
+          // Extract text content from parts
+          const content = getMessageText(message);
+
           // Filter out empty messages
-          if (!message.content || message.content.trim() === '') {
+          if (!content || content.trim() === '') {
             return null;
           }
 
           return message.role === 'user' ? (
-            <UserMessage key={message.id} content={message.content} />
+            <UserMessage key={message.id} content={content} />
           ) : (
-            <AssistantMessage key={message.id} content={message.content} />
+            <AssistantMessage key={message.id} content={content} />
           );
         })}
 

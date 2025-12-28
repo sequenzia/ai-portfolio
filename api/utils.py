@@ -161,7 +161,8 @@ def _parse_experience(section: str) -> list[dict[str, Any]]:
             if in_description and line.strip():
                 description_lines.append(line.strip())
 
-        technologies = [t.strip() for t in tech_section.split(",") if t.strip()]
+        technologies = [t.strip()
+                        for t in tech_section.split(",") if t.strip()]
 
         items.append({
             "id": exp_id,
@@ -211,7 +212,8 @@ def _parse_projects(section: str) -> list[dict[str, Any]]:
                     found_second = True
                     break
 
-        technologies = [t.strip() for t in tech_section.split(",") if t.strip()]
+        technologies = [t.strip()
+                        for t in tech_section.split(",") if t.strip()]
 
         items.append({
             "id": proj_id,
@@ -281,7 +283,8 @@ def _parse_skills(section: str) -> dict[str, list[str]]:
             "Backend & Infrastructure": "backend",
             "AI & Machine Learning": "ai",
         }
-        key = key_map.get(category_name, category_name.lower().replace(" ", "_"))
+        key = key_map.get(
+            category_name, category_name.lower().replace(" ", "_"))
 
         skill_list: list[str] = []
         for line in part.split("\n"):
