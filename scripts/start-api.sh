@@ -1,3 +1,3 @@
 #!/bin/bash
 
-uvicorn api.app:app --factory --port 3001
+uvicorn api.chat:app --factory --port 3001

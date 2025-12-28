@@ -1,30 +1,31 @@
-import json
-from typing import cast
+from __future__ import annotations
 
-from fastapi import FastAPI
+import json
+
+
+import logging
+import datetime
+
+from typing import cast
+from dotenv import load_dotenv
+from pydantic import BaseModel
+from fastapi import FastAPI, APIRouter
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
-from pydantic import BaseModel
+from contextlib import asynccontextmanager
 from openai import OpenAI
 from openai.types.responses import ResponseInputParam, FunctionToolParam
-from dotenv import load_dotenv
 
+from ._version import __version__
 from .utils import load_portfolio_content
 
 
+logger = logging.getLogger("uvicorn")
+
+API_NAME = "AI Portfolio"
+API_VERSION = __version__
+
 load_dotenv(".env.local")
-
-# Create FastAPI app for Vercel serverless function
-app = FastAPI()
-
-# CORS middleware for frontend access
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
 
 
 # Load portfolio content from the single-source-of-truth markdown file
@@ -276,9 +277,56 @@ async def chat(request: ChatRequest):
     )
 
 
-# Register route for Vercel serverless function
-# When deployed, /api/chat routes to this app's root
-@app.post("/")
-async def handler(request: ChatRequest):
-    """Vercel serverless function handler."""
-    return await chat(request)
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    logger.info(f"Starting {API_NAME} v{API_VERSION}")
+    yield
+    logger.info(f"Shutting down {API_NAME} v{API_VERSION}")
+
+
+def app():
+
+    app = FastAPI(
+        title=API_NAME,
+        version=API_VERSION,
+        lifespan=lifespan,
+        openapi_url="/openapi.json",
+        docs_url="/docs",
+    )
+
+    @app.get("/", response_model=dict, tags=["root"])
+    async def root():
+        return {"name": API_NAME, "version": API_VERSION, "docs": "/docs"}
+
+    @app.get("/health", response_model=dict, tags=["health"])
+    async def health():
+        return {
+            "status": "ok",
+            "version": API_VERSION,
+            "name": API_NAME,
+            "timestamp": datetime.datetime.now().isoformat(),
+        }
+
+    router = APIRouter()
+
+    router.add_api_route(
+        "/api/chat", chat, methods=["POST"], response_class=StreamingResponse
+    )
+
+    app.include_router(router)
+
+    # CORS middleware for frontend access
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=["*"],
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
+
+    return app
+
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=3001)
