@@ -1,6 +1,8 @@
 import json
 from typing import cast
 
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 from openai import OpenAI
@@ -11,6 +13,18 @@ from .utils import load_portfolio_content
 
 
 load_dotenv(".env.local")
+
+# Create FastAPI app for Vercel serverless function
+app = FastAPI()
+
+# CORS middleware for frontend access
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 # Load portfolio content from the single-source-of-truth markdown file
@@ -239,8 +253,6 @@ async def root(request: ChatRequest):
     messages = [{"role": msg.role, "content": msg.content}
                 for msg in request.messages]
 
-    print(f"Received messages: {messages}")
-
     return StreamingResponse(
         stream_response(messages),
         media_type="text/event-stream",
@@ -251,3 +263,11 @@ async def root(request: ChatRequest):
             "x-vercel-ai-ui-message-stream": "v1",
         },
     )
+
+
+# Register route for Vercel serverless function
+# When deployed, /api/chat routes to this app's root
+@app.post("/")
+async def handler(request: ChatRequest):
+    """Vercel serverless function handler."""
+    return await root(request)

@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import logging
+import datetime
+
 from fastapi import FastAPI, APIRouter
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
@@ -22,15 +24,16 @@ async def lifespan(app: FastAPI):
     logger.info(f"Shutting down {API_NAME} v{API_VERSION}")
 
 
-def app():
+def create_app():
+    """Factory function for creating the FastAPI app (used by uvicorn --factory)."""
 
-    app = FastAPI(title=API_NAME,
-                  version=API_VERSION,
-                  lifespan=lifespan,
-                  openapi_url="/openapi.json",
-                  docs_url="/docs")
+    application = FastAPI(title=API_NAME,
+                          version=API_VERSION,
+                          lifespan=lifespan,
+                          openapi_url="/openapi.json",
+                          docs_url="/docs")
 
-    @app.get("/", response_model=dict, tags=["root"])
+    @application.get("/", response_model=dict, tags=["root"])
     async def root():
         return {
             "name": API_NAME,
@@ -38,7 +41,7 @@ def app():
             "docs": "/docs"
         }
 
-    @app.get("/health", response_model=dict, tags=["health"])
+    @application.get("/health", response_model=dict, tags=["health"])
     async def health():
         return {
             "status": "ok",
@@ -54,10 +57,10 @@ def app():
                          methods=["POST"],
                          response_class=StreamingResponse)
 
-    app.include_router(router)
+    application.include_router(router)
 
     # CORS middleware for frontend access
-    app.add_middleware(
+    application.add_middleware(
         CORSMiddleware,
         allow_origins=["*"],
         allow_credentials=True,
@@ -65,4 +68,8 @@ def app():
         allow_headers=["*"],
     )
 
-    return app
+    return application
+
+
+# Alias for backwards compatibility with uvicorn --factory
+app = create_app
