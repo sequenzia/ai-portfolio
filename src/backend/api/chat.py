@@ -261,7 +261,8 @@ async def stream_response(messages: list[dict]):
 
 async def chat(request: ChatRequest):
     """Handle chat requests with streaming responses."""
-    messages = [{"role": msg.role, "content": msg.content} for msg in request.messages]
+    messages = [{"role": msg.role, "content": msg.content}
+                for msg in request.messages]
 
     return StreamingResponse(
         stream_response(messages),

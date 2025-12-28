@@ -1,3 +1,3 @@
 #!/bin/bash
 
-uvicorn api:app --factory --port 3001 --reload --reload-dir api
+uvicorn src.app:app --factory --port 3001 --reload --reload-dir src
