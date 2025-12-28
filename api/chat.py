@@ -1,28 +1,17 @@
 import json
 from typing import cast
 
-from fastapi import FastAPI
 from fastapi.responses import StreamingResponse
-from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from openai import OpenAI
 from openai.types.responses import ResponseInputParam, FunctionToolParam
 from dotenv import load_dotenv
 
-from .parse_portfolio import load_portfolio_content
+from .utils import load_portfolio_content
 
-load_dotenv(".env.local")  # Load environment variables from .env file
 
-app = FastAPI()
+load_dotenv(".env.local")
 
-# CORS middleware for frontend access
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
 
 # Load portfolio content from the single-source-of-truth markdown file
 portfolio_content = load_portfolio_content()
@@ -151,7 +140,8 @@ async def stream_response(messages: list[dict]):
     try:
         # Convert messages to Responses API input format
         input_messages: ResponseInputParam = [
-            {"role": cast(str, msg["role"]), "content": msg["content"]}  # type: ignore[misc]
+            # type: ignore[misc]
+            {"role": cast(str, msg["role"]), "content": msg["content"]}
             for msg in messages
         ]
 
@@ -194,7 +184,8 @@ async def stream_response(messages: list[dict]):
                     if event.item.type == "function_call":
                         call_id = event.item.id
                         # Parse arguments from JSON string to object
-                        args = json.loads(event.item.arguments) if event.item.arguments else {}
+                        args = json.loads(
+                            event.item.arguments) if event.item.arguments else {}
                         tool_data = {
                             "toolCallId": call_id,
                             "toolName": event.item.name,
@@ -218,10 +209,12 @@ async def stream_response(messages: list[dict]):
         yield f"3:{json.dumps(error_data)}\n"
 
 
-@app.post("/api/chat")
-async def chat(request: ChatRequest):
+async def root(request: ChatRequest):
     """Handle chat requests with streaming responses."""
-    messages = [{"role": msg.role, "content": msg.content} for msg in request.messages]
+    messages = [{"role": msg.role, "content": msg.content}
+                for msg in request.messages]
+
+    print(f"Received messages: {messages}")
 
     return StreamingResponse(
         stream_response(messages),
@@ -232,14 +225,3 @@ async def chat(request: ChatRequest):
             "X-Accel-Buffering": "no",
         },
     )
-
-
-@app.get("/health")
-async def health():
-    """Health check endpoint."""
-    return {"status": "ok"}
-
-
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=3001)

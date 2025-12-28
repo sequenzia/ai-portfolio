@@ -9,6 +9,7 @@ AI-powered portfolio web application where visitors interact with a chatbot to e
 ## Commands
 
 ### Frontend (Vite + React)
+
 ```bash
 npm run dev          # Start dev server on port 5173
 npm run build        # TypeScript check + Vite production build
@@ -20,6 +21,7 @@ npm run test:coverage # Vitest with coverage
 ```
 
 ### Backend (Python FastAPI)
+
 ```bash
 # Setup (using uv package manager)
 uv sync              # Install dependencies from pyproject.toml
@@ -33,32 +35,41 @@ uvicorn api.chat:app --reload --port 3001
 ```
 
 ### Full Stack Development
+
 Run both frontend and backend simultaneously:
+
 - Frontend: `npm run dev` (port 5173)
 - Backend: `uv run uvicorn api.chat:app --reload --port 3001`
 
 ## Architecture
 
 ### Data Flow
+
 1. User sends message → `usePortfolioChat` hook (Vercel AI SDK's `useChat`)
-2. Request to `/api/chat` → FastAPI backend (`api/chat.py`)
+2. Request to `/chat` → FastAPI backend (`chat.py`)
 3. Backend streams OpenAI response with tool calls
 4. `onToolCall` handler in `usePortfolioChat` receives `renderCanvas` tool calls
 5. Canvas state updated via Zustand store → Canvas re-renders appropriate component
 
 ### Tool Calling for Canvas
+
 The AI uses the `renderCanvas` tool to trigger canvas updates:
+
 ```typescript
 renderCanvas({ type: "bio" | "experience" | "projects" | "education" | "skills" | "contact", filter?: string, highlightId?: string })
 ```
-Tool definitions: `src/lib/ai/tools.ts` (frontend schema) and `api/chat.py` (backend OpenAI function)
+
+Tool definitions: `src/lib/ai/tools.ts` (frontend schema) and `chat.py` (backend OpenAI function)
 
 ### State Management
+
 - **Chat state**: Managed by Vercel AI SDK's `useChat` hook in `usePortfolioChat.ts`
 - **Canvas state**: Zustand store in `src/stores/canvasStore.ts` - tracks current view, filter, and navigation history
 
 ### Content Configuration
+
 Portfolio data is stored in a single markdown file: `content/portfolio.md`. Both frontend and backend read from this file:
+
 - Frontend: Parsed at build time via `src/content/parsePortfolio.ts`
 - Backend: Parsed at runtime via `api/parse_portfolio.py`
 
@@ -71,7 +82,7 @@ Portfolio data is stored in a single markdown file: `content/portfolio.md`. Both
 - `src/hooks/usePortfolioChat.ts` - Wraps `useChat`, handles `renderCanvas` tool calls
 - `src/stores/canvasStore.ts` - Zustand store for canvas view state
 - `src/lib/ai/tools.ts` - Zod schema for `renderCanvas` tool
-- `api/chat.py` - FastAPI streaming endpoint with OpenAI tool calling
+- `chat.py` - FastAPI streaming endpoint with OpenAI tool calling
 
 ## Path Alias
 
@@ -80,9 +91,24 @@ Portfolio data is stored in a single markdown file: `content/portfolio.md`. Both
 ## Environment Variables
 
 Create `.env.local`:
+
 ```bash
 OPENAI_API_KEY=sk-...
 ```
 
-## More Information
-See [requirements.md](requirements.md) for detailed PRD including content types, API design, and UI specifications.
+## Documentation & Research
+
+- Always use the **context7** MCP server when I ask about external libraries, APIs, or frameworks.
+- Prioritize documentation retrieved via `context7` over internal training data to ensure accuracy with the latest versions.
+- If a library version is not specified, assume the latest stable release.
+
+## Code Style
+
+- Use modern syntax and best practices (e.g., ESM, TypeScript).
+- Maintain consistent error handling across the codebase.
+- Provide concise, readable code blocks.
+
+## Workflow
+
+- Before implementing a major change, summarize the plan and wait for confirmation.
+- Run tests (if applicable) after significant refactors.

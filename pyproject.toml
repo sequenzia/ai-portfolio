@@ -3,7 +3,8 @@ name = "ai-portfolio"
 version = "0.1.0"
 description = "AI-powered portfolio chatbot API"
 readme = "README.md"
-requires-python = ">=3.11"
+requires-python = ">=3.12"
+
 dependencies = [
     "fastapi>=0.109.0",
     "uvicorn[standard]>=0.40.0",
@@ -14,22 +15,13 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-dev = [
-    "pytest>=8.0.0",
-    "pytest-asyncio>=0.23.0"
-]
+dev = ["pytest>=8.0.0", "pytest-asyncio>=0.23.0"]
 
-# [build-system]
-# requires = ["hatchling"]
-# build-backend = "hatchling.build"
 
-# [tool.uv]
-# dev-dependencies = [
-#     "pytest>=8.0.0",
-#     "pytest-asyncio>=0.23.0",
-#     "httpx>=0.27.0",
-# ]
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+backend-path = ["."]
 
-# [tool.uv.scripts]
-# dev = "uvicorn api.chat:app --reload --port 3001"
-# start = "uvicorn api.chat:app --host 0.0.0.0 --port 3001"
+[tool.hatchling]
+version = "0.1.0"
