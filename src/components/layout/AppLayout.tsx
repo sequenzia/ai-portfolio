@@ -1,8 +1,6 @@
-import { type ReactNode, useState } from 'react';
+import { type ReactNode } from 'react';
 import { useBreakpoints } from '@/hooks/useMediaQuery';
 import { Header } from './Header';
-import { MobileToggle } from './MobileToggle';
-import { cn } from '@/lib/utils/cn';
 
 interface AppLayoutProps {
   chatPanel: ReactNode;
@@ -11,7 +9,6 @@ interface AppLayoutProps {
 
 export function AppLayout({ chatPanel, canvasPanel }: AppLayoutProps) {
   const { isDesktop } = useBreakpoints();
-  const [activeView, setActiveView] = useState<'chat' | 'canvas'>('chat');
 
   // Desktop: side-by-side layout (40% chat, 60% canvas)
   if (isDesktop) {
@@ -32,27 +29,18 @@ export function AppLayout({ chatPanel, canvasPanel }: AppLayoutProps) {
     );
   }
 
-  // Mobile/Tablet: stacked layout with toggle
+  // Mobile/Tablet: stacked layout with chat on top, canvas below
   return (
     <div className="flex h-screen flex-col bg-gray-50">
       <Header />
-      <MobileToggle activeView={activeView} onToggle={setActiveView} />
-      <div className="flex-1 overflow-hidden">
-        <div
-          className={cn(
-            'h-full transition-opacity duration-200',
-            activeView === 'chat' ? 'block' : 'hidden'
-          )}
-        >
-          <div className="h-full bg-surface-chat flex flex-col">{chatPanel}</div>
+      <div className="flex-1 flex flex-col overflow-hidden">
+        {/* Chat Panel - takes up 50% of available space */}
+        <div className="h-1/2 min-h-[250px] border-b border-gray-200 bg-surface-chat flex flex-col">
+          {chatPanel}
         </div>
-        <div
-          className={cn(
-            'h-full transition-opacity duration-200',
-            activeView === 'canvas' ? 'block' : 'hidden'
-          )}
-        >
-          <div className="h-full bg-surface-canvas overflow-hidden">{canvasPanel}</div>
+        {/* Canvas Panel - takes up remaining 50% */}
+        <div className="h-1/2 min-h-[200px] bg-surface-canvas overflow-hidden">
+          {canvasPanel}
         </div>
       </div>
     </div>
