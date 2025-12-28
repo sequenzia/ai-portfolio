@@ -1,16 +1,13 @@
 import { useState } from 'react';
 import { useChat } from '@ai-sdk/react';
 import { DefaultChatTransport } from 'ai';
-import { useCanvasStore } from '@/stores/canvasStore';
 import type { RenderCanvasParams } from '@/lib/ai/tools';
-import type { CanvasViewType } from '@/content/types';
 
 /**
  * Custom hook that wraps Vercel AI SDK's useChat with portfolio-specific functionality.
- * Handles tool calls to update the canvas state.
+ * Tool calls are rendered inline in the chat message list.
  */
 export function usePortfolioChat() {
-  const setView = useCanvasStore((state) => state.setView);
   const [input, setInput] = useState('');
 
   const { messages, sendMessage, addToolOutput, status, error, stop } = useChat({
@@ -18,25 +15,16 @@ export function usePortfolioChat() {
       api: '/api/chat',
     }),
 
-    // Handle tool calls from the AI
+    // Handle tool calls from the AI - provide output so the AI knows the action completed
     onToolCall: async ({ toolCall }) => {
-      console.log('onToolCall received:', JSON.stringify(toolCall, null, 2));
       if (toolCall.dynamic) {
-        console.log('Skipping dynamic tool call');
         return;
       }
       if (toolCall.toolName === 'renderCanvas') {
         const params = toolCall.input as RenderCanvasParams;
 
-        // Update canvas state
-        console.log('Setting canvas view:', params.type, params);
-        setView(params.type as CanvasViewType, {
-          filter: params.filter,
-          highlightId: params.highlightId,
-        });
-
         // Provide tool result using addToolOutput (don't await to avoid deadlocks)
-        const result = `Canvas updated to show ${params.type}${params.filter ? ` (filtered by: ${params.filter})` : ''}${params.highlightId ? ` (highlighting: ${params.highlightId})` : ''}`;
+        const result = `Displayed ${params.type} content${params.filter ? ` (filtered by: ${params.filter})` : ''}${params.highlightId ? ` (highlighting: ${params.highlightId})` : ''}`;
 
         addToolOutput({
           tool: 'renderCanvas',

@@ -3,7 +3,9 @@ import { AnimatePresence } from 'framer-motion';
 import type { UIMessage } from 'ai';
 import { UserMessage, AssistantMessage } from './Message';
 import { TypingIndicator } from './TypingIndicator';
+import { ContentBlock } from './ContentBlock';
 import { cn } from '@/lib/utils/cn';
+import type { CanvasViewType } from '@/content/types';
 
 interface MessageListProps {
   messages: UIMessage[];
@@ -19,6 +21,45 @@ function getMessageText(message: UIMessage): string {
     .filter((part): part is { type: 'text'; text: string } => part.type === 'text')
     .map((part) => part.text)
     .join('');
+}
+
+/**
+ * Represents a renderCanvas tool call extracted from message parts
+ */
+interface RenderCanvasToolCall {
+  toolCallId: string;
+  type: CanvasViewType;
+  filter?: string;
+  highlightId?: string;
+}
+
+/**
+ * Extract renderCanvas tool calls from a UIMessage
+ */
+function getToolCalls(message: UIMessage): RenderCanvasToolCall[] {
+  const results: RenderCanvasToolCall[] = [];
+
+  for (const part of message.parts) {
+    const toolPart = part as Record<string, unknown>;
+
+    // Check if this is a renderCanvas tool part
+    // The type format is "tool-{toolName}" (e.g., "tool-renderCanvas")
+    if (part.type === 'tool-renderCanvas' && toolPart.toolCallId) {
+      const input = toolPart.input as Record<string, unknown> | undefined;
+
+      // Only render when input is available (not still streaming)
+      if (input && typeof input.type === 'string' && input.type) {
+        results.push({
+          toolCallId: String(toolPart.toolCallId),
+          type: input.type as CanvasViewType,
+          filter: input.filter as string | undefined,
+          highlightId: input.highlightId as string | undefined,
+        });
+      }
+    }
+  }
+
+  return results;
 }
 
 export function MessageList({ messages, isLoading, className }: MessageListProps) {
@@ -49,16 +90,36 @@ export function MessageList({ messages, isLoading, className }: MessageListProps
 
           // Extract text content from parts
           const content = getMessageText(message);
+          const toolCalls = message.role === 'assistant' ? getToolCalls(message) : [];
 
-          // Filter out empty messages
-          if (!content || content.trim() === '') {
+          // For user messages, just render the message
+          if (message.role === 'user') {
+            if (!content || content.trim() === '') {
+              return null;
+            }
+            return <UserMessage key={message.id} content={content} />;
+          }
+
+          // For assistant messages, render text + any tool call content blocks
+          // Show message if there's text OR tool calls
+          if (!content && toolCalls.length === 0) {
             return null;
           }
 
-          return message.role === 'user' ? (
-            <UserMessage key={message.id} content={content} />
-          ) : (
-            <AssistantMessage key={message.id} content={content} />
+          return (
+            <div key={message.id}>
+              {content && content.trim() !== '' && (
+                <AssistantMessage content={content} />
+              )}
+              {toolCalls.map((toolCall) => (
+                <ContentBlock
+                  key={toolCall.toolCallId}
+                  type={toolCall.type}
+                  filter={toolCall.filter}
+                  highlightId={toolCall.highlightId}
+                />
+              ))}
+            </div>
           );
         })}
 

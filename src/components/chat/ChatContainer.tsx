@@ -25,7 +25,7 @@ export function ChatContainer() {
   };
 
   return (
-    <div className="flex flex-col h-full overflow-hidden">
+    <div className="flex flex-col h-full overflow-hidden border-x border-gray-200">
       {/* Scrollable content area */}
       <div className="flex-1 min-h-0 overflow-y-auto">
         {/* Welcome message when empty */}
@@ -36,7 +36,7 @@ export function ChatContainer() {
       </div>
 
       {/* Fixed bottom section */}
-      <div className="flex-shrink-0">
+      <div className="flex-shrink-0 border-t border-gray-100">
         {/* Suggested prompts */}
         <SuggestedPrompts onSelect={handlePromptSelect} />
 
