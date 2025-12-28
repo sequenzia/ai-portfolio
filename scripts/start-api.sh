@@ -1,3 +1,3 @@
 #!/bin/bash
 
-uvicorn src.app:app --factory --port 3001
+uvicorn backend.api.app:app --factory --port 3001

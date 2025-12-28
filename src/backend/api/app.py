@@ -7,8 +7,8 @@ from fastapi import FastAPI, APIRouter
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from contextlib import asynccontextmanager
-from .backend.api.chat import chat
-from .version import __version__
+from .chat import chat
+from ._version import __version__
 
 logger = logging.getLogger("uvicorn")
 
@@ -64,3 +64,8 @@ def app():
     )
 
     return app
+
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=3001)
