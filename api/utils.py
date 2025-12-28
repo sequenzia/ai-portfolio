@@ -25,8 +25,7 @@ def parse_portfolio_markdown(markdown: str) -> dict[str, Any]:
 def load_portfolio_content() -> dict[str, Any]:
     """Load and parse the portfolio markdown file."""
     # Path relative to the api directory
-    portfolio_path = Path(__file__).parent.parent.parent.parent / \
-        "content" / "portfolio.md"
+    portfolio_path = Path(__file__).parent.parent / "content" / "portfolio.md"
     markdown = portfolio_path.read_text(encoding="utf-8")
     return parse_portfolio_markdown(markdown)
 
