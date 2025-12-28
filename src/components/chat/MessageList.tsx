@@ -40,7 +40,7 @@ export function MessageList({ messages, isLoading, className }: MessageListProps
         className
       )}
     >
-      <AnimatePresence mode="popLayout">
+      <AnimatePresence mode="sync">
         {messages.map((message) => {
           // Skip system messages
           if (message.role === 'system') {
