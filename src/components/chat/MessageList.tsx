@@ -36,7 +36,7 @@ export function MessageList({ messages, isLoading, className }: MessageListProps
     <div
       ref={containerRef}
       className={cn(
-        'flex-1 overflow-y-auto px-4 py-4 space-y-4 scrollbar-thin',
+        'px-4 py-4 space-y-4',
         className
       )}
     >

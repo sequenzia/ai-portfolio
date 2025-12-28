@@ -25,23 +25,29 @@ export function ChatContainer() {
   };
 
   return (
-    <div className="flex flex-col h-full">
-      {/* Welcome message when empty */}
-      {showWelcome && <WelcomeMessage />}
+    <div className="flex flex-col h-full overflow-hidden">
+      {/* Scrollable content area */}
+      <div className="flex-1 min-h-0 overflow-y-auto">
+        {/* Welcome message when empty */}
+        {showWelcome && <WelcomeMessage />}
 
-      {/* Message list */}
-      <MessageList messages={messages} isLoading={isLoading} />
+        {/* Message list */}
+        <MessageList messages={messages} isLoading={isLoading} />
+      </div>
 
-      {/* Suggested prompts - always visible */}
-      <SuggestedPrompts onSelect={handlePromptSelect} />
+      {/* Fixed bottom section */}
+      <div className="flex-shrink-0">
+        {/* Suggested prompts */}
+        <SuggestedPrompts onSelect={handlePromptSelect} />
 
-      {/* Input */}
-      <ChatInput
-        value={input}
-        onChange={handleInputChange}
-        onSubmit={handleSubmit}
-        disabled={isLoading}
-      />
+        {/* Input */}
+        <ChatInput
+          value={input}
+          onChange={handleInputChange}
+          onSubmit={handleSubmit}
+          disabled={isLoading}
+        />
+      </div>
     </div>
   );
 }

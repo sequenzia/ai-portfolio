@@ -23,10 +23,6 @@ export function WelcomeMessage() {
             <p className="text-gray-900 mb-3">
               Hi! I'm an AI Agent for <strong>{bio.name}'s</strong> portfolio.
             </p>
-            <p className="text-gray-700 text-sm mb-3">
-              I'm here to help you learn about {bio.name}'s professional background,
-              projects, skills, and more. Feel free to ask me anything!
-            </p>
             <p className="text-gray-500 text-sm">
               Try asking about experience, projects, or skills - or use the suggestions below.
             </p>
