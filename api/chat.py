@@ -284,7 +284,7 @@ async def lifespan(app: FastAPI):
     logger.info(f"Shutting down {API_NAME} v{API_VERSION}")
 
 
-def app():
+def create_app():
 
     app = FastAPI(
         title=API_NAME,
@@ -329,4 +329,4 @@ def app():
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=3001)
+    uvicorn.run(create_app, host="0.0.0.0", port=3001)
