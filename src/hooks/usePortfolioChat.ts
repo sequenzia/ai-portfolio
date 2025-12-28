@@ -26,7 +26,7 @@ export function usePortfolioChat() {
         return;
       }
       if (toolCall.toolName === 'renderCanvas') {
-        const params = (toolCall.args ?? toolCall.input) as RenderCanvasParams;
+        const params = toolCall.input as RenderCanvasParams;
 
         // Update canvas state
         console.log('Setting canvas view:', params.type, params);
