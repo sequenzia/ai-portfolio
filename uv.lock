@@ -8,6 +8,7 @@ version = "0.1.0"
 source = { editable = "." }
 dependencies = [
     { name = "fastapi" },
+    { name = "fastapi-ai-sdk" },
     { name = "httpx" },
     { name = "openai" },
     { name = "pydantic" },
@@ -24,6 +25,7 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "fastapi", specifier = ">=0.109.0" },
+    { name = "fastapi-ai-sdk", specifier = ">=0.1.0" },
     { name = "httpx", specifier = ">=0.27.0" },
     { name = "openai", specifier = ">=1.12.0" },
     { name = "pydantic", specifier = ">=2.10.0" },
@@ -117,6 +119,20 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/96/8a/6b9ba6eb8ff3817caae83120495965d9e70afb4d6348cb120e464ee199f4/fastapi-0.127.1.tar.gz", hash = "sha256:946a87ee5d931883b562b6bada787d6c8178becee2683cb3f9b980d593206359", size = 391876, upload-time = "2025-12-26T13:04:47.075Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/d2/f3/a6858d147ed2645c095d11dc2440f94a5f1cd8f4df888e3377e6b5281a0f/fastapi-0.127.1-py3-none-any.whl", hash = "sha256:31d670a4f9373cc6d7994420f98e4dc46ea693145207abc39696746c83a44430", size = 112332, upload-time = "2025-12-26T13:04:45.329Z" },
+]
+
+[[package]]
+name = "fastapi-ai-sdk"
+version = "0.1.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "fastapi" },
+    { name = "pydantic" },
+    { name = "typing-extensions" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/37/36/00ca91a31ec24f9b7dfedec10c7c88cc347b10900339f70f47ce5bc5c585/fastapi_ai_sdk-0.1.0.tar.gz", hash = "sha256:19353d99c8f86a3ae27cbf8855017a169c31fd906c71c155ba005d9f1e892370", size = 31192, upload-time = "2025-09-25T21:42:38.762Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/c7/1b/cd8987b569d8503065652c9d381891bdec8b049174f6939b8c0461a21954/fastapi_ai_sdk-0.1.0-py3-none-any.whl", hash = "sha256:a8b399c71ae89b527f305ac00cec5840e50dad7e36765070e7b099e7dbba99a0", size = 14844, upload-time = "2025-09-25T21:42:37.117Z" },
 ]
 
 [[package]]

@@ -1,20 +1,24 @@
 from __future__ import annotations
 
 import json
-
-
 import logging
 import datetime
+import uuid
 
 from typing import cast
 from dotenv import load_dotenv
 from pydantic import BaseModel
 from fastapi import FastAPI, APIRouter
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import StreamingResponse
 from contextlib import asynccontextmanager
 from openai import OpenAI
 from openai.types.responses import ResponseInputParam, FunctionToolParam
+from fastapi_ai_sdk import create_ai_stream_response, AIStream
+from fastapi_ai_sdk.models import (
+    StartEvent, TextStartEvent, TextDeltaEvent,
+    TextEndEvent, FinishEvent, ToolInputStartEvent,
+    ToolInputDeltaEvent, ToolInputAvailableEvent
+)
 
 from ._version import __version__
 from .utils import load_portfolio_content
@@ -180,84 +184,94 @@ client = OpenAI()
 
 def generate_message_id():
     """Generate a unique message ID."""
-    import uuid
-
     return f"msg_{uuid.uuid4().hex[:24]}"
 
 
-async def stream_response(messages: list[dict]):
-    """Stream the OpenAI response using Responses API with Vercel AI SDK v5/v6 format."""
-    try:
-        # Convert messages to Responses API input format
-        input_messages: ResponseInputParam = [
-            # type: ignore[misc]
-            {"role": cast(str, msg["role"]), "content": msg["content"]}
-            for msg in messages
-        ]
+async def stream_openai_response(messages: list[dict]):
+    """Stream the OpenAI response using fastapi-ai-sdk format."""
+    # Convert messages to Responses API input format
+    input_messages: ResponseInputParam = [
+        {"role": cast(str, msg["role"]), "content": msg["content"]}
+        for msg in messages
+    ]
 
-        system_prompt = generate_system_prompt()
-        message_id = generate_message_id()
-        text_id = f"text_{message_id}"
+    system_prompt = generate_system_prompt()
+    message_id = generate_message_id()
+    text_id = f"text_{message_id}"
 
-        # Use Responses API with streaming
-        with client.responses.create(
-            model="gpt-4o-mini",
-            instructions=system_prompt,
-            input=input_messages,
-            tools=tools,
-            stream=True,
-        ) as response:
-            # Track if we've started text output
-            text_started = False
+    async def event_generator():
+        try:
+            # Start the message stream
+            yield StartEvent(message_id=message_id)
 
-            for event in response:
-                # Handle text delta events
-                if event.type == "response.output_text.delta":
-                    if not text_started:
-                        # Send text start event
-                        yield f"data: {json.dumps({'type': 'text-start', 'id': text_id})}\n\n"
-                        text_started = True
-                    # Send text delta
-                    yield f"data: {json.dumps({'type': 'text-delta', 'id': text_id, 'textDelta': event.delta})}\n\n"
+            # Use Responses API with streaming
+            with client.responses.create(
+                model="gpt-4o-mini",
+                instructions=system_prompt,
+                input=input_messages,
+                tools=tools,
+                stream=True,
+            ) as response:
+                text_started = False
+                current_tool_call_id = None
+                tool_call_args = ""
 
-                # Handle new output items (including function calls)
-                elif event.type == "response.output_item.added":
-                    if event.item.type == "function_call":
-                        call_id = event.item.id
-                        # Send tool input start
-                        yield f"data: {json.dumps({'type': 'tool-input-start', 'toolCallId': call_id, 'toolName': event.item.name})}\n\n"
+                for event in response:
+                    # Handle text delta events
+                    if event.type == "response.output_text.delta":
+                        if not text_started:
+                            yield TextStartEvent(id=text_id)
+                            text_started = True
+                        yield TextDeltaEvent(id=text_id, delta=event.delta)
 
-                # Handle function call arguments delta
-                elif event.type == "response.function_call_arguments.delta":
-                    call_id = event.item_id
-                    # Send tool input delta
-                    yield f"data: {json.dumps({'type': 'tool-input-delta', 'toolCallId': call_id, 'inputTextDelta': event.delta})}\n\n"
+                    # Handle new output items (including function calls)
+                    elif event.type == "response.output_item.added":
+                        if event.item.type == "function_call":
+                            current_tool_call_id = event.item.id
+                            tool_call_args = ""
+                            yield ToolInputStartEvent(
+                                tool_call_id=current_tool_call_id,
+                                tool_name=event.item.name
+                            )
 
-                # Handle completed output items
-                elif event.type == "response.output_item.done":
-                    if event.item.type == "function_call":
-                        call_id = event.item.id
-                        # Parse arguments from JSON string to object
-                        args = (
-                            json.loads(event.item.arguments)
-                            if event.item.arguments
-                            else {}
+                    # Handle function call arguments delta
+                    elif event.type == "response.function_call_arguments.delta":
+                        tool_call_args += event.delta
+                        yield ToolInputDeltaEvent(
+                            tool_call_id=event.item_id,
+                            input_text_delta=event.delta
                         )
-                        # Send tool input available (this triggers onToolCall)
-                        yield f"data: {json.dumps({'type': 'tool-input-available', 'toolCallId': call_id, 'toolName': event.item.name, 'input': args})}\n\n"
 
-                # Handle response completion
-                elif event.type == "response.completed":
-                    # Send text end if we started text
-                    if text_started:
-                        yield f"data: {json.dumps({'type': 'text-end', 'id': text_id})}\n\n"
-                    # Send done signal
-                    yield "data: [DONE]\n\n"
+                    # Handle completed output items
+                    elif event.type == "response.output_item.done":
+                        if event.item.type == "function_call":
+                            # Parse arguments from JSON string to object
+                            args = (
+                                json.loads(event.item.arguments)
+                                if event.item.arguments
+                                else {}
+                            )
+                            yield ToolInputAvailableEvent(
+                                tool_call_id=event.item.id,
+                                tool_name=event.item.name,
+                                input=args
+                            )
 
-    except Exception as e:
-        error_data = {"type": "error", "error": str(e)}
-        yield f"data: {json.dumps(error_data)}\n\n"
-        yield "data: [DONE]\n\n"
+                    # Handle response completion
+                    elif event.type == "response.completed":
+                        if text_started:
+                            yield TextEndEvent(id=text_id)
+
+            # Finish the stream
+            yield FinishEvent()
+
+        except Exception as e:
+            logger.error(f"Stream error: {e}")
+            # Send error and finish
+            yield FinishEvent()
+
+    stream = AIStream(event_generator())
+    return create_ai_stream_response(stream)
 
 
 async def chat(request: ChatRequest):
@@ -265,16 +279,7 @@ async def chat(request: ChatRequest):
     messages = [{"role": msg.role, "content": msg.content}
                 for msg in request.messages]
 
-    return StreamingResponse(
-        stream_response(messages),
-        media_type="text/event-stream",
-        headers={
-            "Cache-Control": "no-cache",
-            "Connection": "keep-alive",
-            "X-Accel-Buffering": "no",
-            "x-vercel-ai-ui-message-stream": "v1",
-        },
-    )
+    return await stream_openai_response(messages)
 
 
 @asynccontextmanager
@@ -310,7 +315,7 @@ def create_app():
     router = APIRouter()
 
     router.add_api_route(
-        "/api/chat", chat, methods=["POST"], response_class=StreamingResponse
+        "/api/chat", chat, methods=["POST"]
     )
 
     app.include_router(router)
