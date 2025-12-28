@@ -7,11 +7,11 @@ Both the frontend and backend read from this file.
 
 ## Bio
 
-name: Alex Jackson
+name: Alex Johnson
 title: Senior Full-Stack Engineer
 location: San Francisco, CA
 photoUrl: /images/profile.jpg
-email: alex@example.com
+email: <alex@example.com>
 
 ### Summary
 
@@ -26,9 +26,9 @@ Passionate software engineer with 8+ years of experience building scalable web a
 
 ### Social Links
 
-- github: https://github.com/alexjohnson
-- linkedin: https://linkedin.com/in/alexjohnson
-- twitter: https://twitter.com/alexjohnson
+- github: <https://github.com/alexjohnson>
+- linkedin: <https://linkedin.com/in/alexjohnson>
+- twitter: <https://twitter.com/alexjohnson>
 
 ---
 
@@ -107,8 +107,8 @@ category: ai
 featured: true
 date: 2024
 imageUrl: /images/projects/ai-platform.png
-liveUrl: https://aiplatform.example.com
-githubUrl: https://github.com/alexjohnson/ai-platform
+liveUrl: <https://aiplatform.example.com>
+githubUrl: <https://github.com/alexjohnson/ai-platform>
 
 Enterprise conversational AI platform with custom training capabilities
 
@@ -126,7 +126,7 @@ category: open-source
 featured: true
 date: 2023
 imageUrl: /images/projects/collab-sdk.png
-githubUrl: https://github.com/alexjohnson/collab-sdk
+githubUrl: <https://github.com/alexjohnson/collab-sdk>
 
 Open-source library for adding real-time collaboration to any application
 
@@ -144,7 +144,7 @@ category: devops
 featured: false
 date: 2023
 imageUrl: /images/projects/devops-dash.png
-liveUrl: https://devops-demo.example.com
+liveUrl: <https://devops-demo.example.com>
 
 Unified monitoring and deployment dashboard for microservices
 
@@ -162,7 +162,7 @@ category: mobile
 featured: false
 date: 2022
 imageUrl: /images/projects/ecommerce-app.png
-liveUrl: https://apps.apple.com/example
+liveUrl: <https://apps.apple.com/example>
 
 Cross-platform mobile shopping experience with AR try-on features
 
@@ -250,13 +250,12 @@ logoUrl: /images/logos/berkeley.png
 
 ## Contact
 
-email: alex@example.com
-calendlyUrl: https://calendly.com/alexjohnson/30min
+email: <alex@example.com>
+calendlyUrl: <https://calendly.com/alexjohnson/30min>
 formEnabled: true
 
 ### Social Links
 
-- github: https://github.com/alexjohnson
-- linkedin: https://linkedin.com/in/alexjohnson
-- twitter: https://twitter.com/alexjohnson
-
+- github: <https://github.com/alexjohnson>
+- linkedin: <https://linkedin.com/in/alexjohnson>
+- twitter: <https://twitter.com/alexjohnson>
