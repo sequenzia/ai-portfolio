@@ -51,21 +51,21 @@ def generate_system_prompt() -> str:
         f"- {e['degree']} from {e['institution']} ({e['years']})" for e in education
     )
 
-    return f"""You are an AI assistant representing {bio['name']}'s professional portfolio.
-Your role is to help visitors learn about {bio['name']}'s background, experience, projects, skills, and how to get in touch.
+    return f"""You are an AI assistant representing {bio["name"]}'s professional portfolio.
+Your role is to help visitors learn about {bio["name"]}'s background, experience, projects, skills, and how to get in touch.
 
 ## Personality
 - Professional yet approachable and friendly
-- Enthusiastic about {bio['name']}'s work
+- Enthusiastic about {bio["name"]}'s work
 - Concise by default, thorough when details requested
 - Speak naturally, as if having a conversation
 
 ## Portfolio Summary
-Name: {bio['name']}
-Title: {bio['title']}
-Location: {bio['location']}
+Name: {bio["name"]}
+Title: {bio["title"]}
+Location: {bio["location"]}
 
-About: {bio['summary']}
+About: {bio["summary"]}
 
 Highlights:
 {highlights}
@@ -80,14 +80,14 @@ Highlights:
 {edu_list}
 
 ## Skills
-- Languages: {', '.join(skills['languages'])}
-- Frontend: {', '.join(skills['frontend'])}
-- Backend: {', '.join(skills['backend'])}
-- AI/ML: {', '.join(skills['ai'])}
+- Languages: {", ".join(skills["languages"])}
+- Frontend: {", ".join(skills["frontend"])}
+- Backend: {", ".join(skills["backend"])}
+- AI/ML: {", ".join(skills["ai"])}
 
 ## Contact
-Email: {contact['email']}
-Calendar: {contact['calendly']}
+Email: {contact["email"]}
+Calendar: {contact["calendly"]}
 
 ## Instructions
 1. Answer questions accurately using the information above
@@ -119,7 +119,14 @@ tools: list[FunctionToolParam] = [
             "properties": {
                 "type": {
                     "type": "string",
-                    "enum": ["bio", "experience", "projects", "education", "skills", "contact"],
+                    "enum": [
+                        "bio",
+                        "experience",
+                        "projects",
+                        "education",
+                        "skills",
+                        "contact",
+                    ],
                     "description": "The type of portfolio content to display",
                 },
                 "filter": {
@@ -173,6 +180,7 @@ client = OpenAI()
 def generate_message_id():
     """Generate a unique message ID."""
     import uuid
+
     return f"msg_{uuid.uuid4().hex[:24]}"
 
 
@@ -229,8 +237,11 @@ async def stream_response(messages: list[dict]):
                     if event.item.type == "function_call":
                         call_id = event.item.id
                         # Parse arguments from JSON string to object
-                        args = json.loads(
-                            event.item.arguments) if event.item.arguments else {}
+                        args = (
+                            json.loads(event.item.arguments)
+                            if event.item.arguments
+                            else {}
+                        )
                         # Send tool input available (this triggers onToolCall)
                         yield f"data: {json.dumps({'type': 'tool-input-available', 'toolCallId': call_id, 'toolName': event.item.name, 'input': args})}\n\n"
 
@@ -248,10 +259,9 @@ async def stream_response(messages: list[dict]):
         yield "data: [DONE]\n\n"
 
 
-async def root(request: ChatRequest):
+async def chat(request: ChatRequest):
     """Handle chat requests with streaming responses."""
-    messages = [{"role": msg.role, "content": msg.content}
-                for msg in request.messages]
+    messages = [{"role": msg.role, "content": msg.content} for msg in request.messages]
 
     return StreamingResponse(
         stream_response(messages),
@@ -270,4 +280,4 @@ async def root(request: ChatRequest):
 @app.post("/")
 async def handler(request: ChatRequest):
     """Vercel serverless function handler."""
-    return await root(request)
+    return await chat(request)

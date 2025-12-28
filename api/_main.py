@@ -7,7 +7,7 @@ from fastapi import FastAPI, APIRouter
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from contextlib import asynccontextmanager
-from .chat import root as chat_root
+from .chat import chat
 
 from ._version import __version__
 
@@ -27,19 +27,17 @@ async def lifespan(app: FastAPI):
 def create_app():
     """Factory function for creating the FastAPI app (used by uvicorn --factory)."""
 
-    application = FastAPI(title=API_NAME,
-                          version=API_VERSION,
-                          lifespan=lifespan,
-                          openapi_url="/openapi.json",
-                          docs_url="/docs")
+    application = FastAPI(
+        title=API_NAME,
+        version=API_VERSION,
+        lifespan=lifespan,
+        openapi_url="/openapi.json",
+        docs_url="/docs",
+    )
 
     @application.get("/", response_model=dict, tags=["root"])
     async def root():
-        return {
-            "name": API_NAME,
-            "version": API_VERSION,
-            "docs": "/docs"
-        }
+        return {"name": API_NAME, "version": API_VERSION, "docs": "/docs"}
 
     @application.get("/health", response_model=dict, tags=["health"])
     async def health():
@@ -47,15 +45,14 @@ def create_app():
             "status": "ok",
             "version": API_VERSION,
             "name": API_NAME,
-            "timestamp": datetime.datetime.now().isoformat()
+            "timestamp": datetime.datetime.now().isoformat(),
         }
 
     router = APIRouter()
 
-    router.add_api_route("/api/chat",
-                         chat_root,
-                         methods=["POST"],
-                         response_class=StreamingResponse)
+    router.add_api_route(
+        "/api/chat", chat, methods=["POST"], response_class=StreamingResponse
+    )
 
     application.include_router(router)
 
