@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { portfolioContent } from '@/lib/content/portfolio';
-import { Badge } from '@/components/ui/Badge';
+import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils/cn';
 import type { CanvasData } from '@/lib/content/types';
 

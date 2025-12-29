@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion';
 import { portfolioContent } from '@/lib/content/portfolio';
 import { ProjectCard } from './ProjectCard';
-import { Badge } from '@/components/ui/Badge';
+import { Badge } from '@/components/ui/badge';
 import type { CanvasData } from '@/lib/content/types';
 
 interface ProjectGridProps {

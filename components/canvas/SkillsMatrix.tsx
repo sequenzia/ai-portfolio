@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { portfolioContent } from '@/lib/content/portfolio';
-import { Badge, SkillLevelBadge } from '@/components/ui/Badge';
+import { Badge, SkillLevelBadge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils/cn';
 import type { CanvasData, Skill } from '@/lib/content/types';
 
