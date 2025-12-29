@@ -31,7 +31,12 @@
       "mcp__chrome-devtools__close_page",
       "mcp__plugin_context7_context7__resolve-library-id",
       "mcp__plugin_context7_context7__get-library-docs",
-      "Bash(timeout 10 npm run dev:*)"
+      "Bash(timeout 10 npm run dev:*)",
+      "mcp__ai-elements__get_ai_elements_components",
+      "mcp__ai-elements__get_ai_elements_component",
+      "Bash(npx shadcn@latest init -d)",
+      "Bash(npx ai-elements@latest add:*)",
+      "Bash(yes:*)"
     ]
   }
 }

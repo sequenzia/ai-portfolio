@@ -1,71 +1,69 @@
-import { forwardRef, type HTMLAttributes } from 'react';
-import { cn } from '@/lib/utils/cn';
+import * as React from "react"
+import { cva, type VariantProps } from "class-variance-authority"
 
-export interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
-  variant?: 'default' | 'secondary' | 'success' | 'warning' | 'error' | 'outline';
-  size?: 'sm' | 'md';
+import { cn } from "@/lib/utils"
+
+const badgeVariants = cva(
+  "inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
+  {
+    variants: {
+      variant: {
+        default:
+          "border-transparent bg-primary text-primary-foreground shadow hover:bg-primary/80",
+        secondary:
+          "border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80",
+        destructive:
+          "border-transparent bg-destructive text-destructive-foreground shadow hover:bg-destructive/80",
+        outline: "text-foreground",
+        success:
+          "border-transparent bg-green-100 text-green-800 shadow-sm",
+        warning:
+          "border-transparent bg-yellow-100 text-yellow-800 shadow-sm",
+      },
+      size: {
+        default: "px-2.5 py-0.5",
+        sm: "px-2 py-0.5 text-[0.65rem]",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+      size: "default",
+    },
+  }
+)
+
+export interface BadgeProps
+  extends React.HTMLAttributes<HTMLDivElement>,
+    VariantProps<typeof badgeVariants> {}
+
+function Badge({ className, variant, size, ...props }: BadgeProps) {
+  return (
+    <div className={cn(badgeVariants({ variant, size }), className)} {...props} />
+  )
 }
 
-export const Badge = forwardRef<HTMLSpanElement, BadgeProps>(
-  ({ className, variant = 'default', size = 'sm', ...props }, ref) => {
-    return (
-      <span
-        ref={ref}
-        className={cn(
-          // Base styles
-          'inline-flex items-center font-medium rounded-full',
+// Skill level badge for the skills matrix
+type SkillLevel = 'beginner' | 'intermediate' | 'advanced' | 'expert';
 
-          // Size styles
-          {
-            'px-2 py-0.5 text-xs': size === 'sm',
-            'px-2.5 py-1 text-sm': size === 'md',
-          },
+const skillLevelConfig: Record<SkillLevel, { label: string; className: string }> = {
+  beginner: { label: 'Beginner', className: 'bg-gray-100 text-gray-700' },
+  intermediate: { label: 'Intermediate', className: 'bg-blue-100 text-blue-700' },
+  advanced: { label: 'Advanced', className: 'bg-green-100 text-green-700' },
+  expert: { label: 'Expert', className: 'bg-yellow-100 text-yellow-700' },
+};
 
-          // Variant styles
-          {
-            'bg-primary-100 text-primary-800': variant === 'default',
-            'bg-gray-100 text-gray-800': variant === 'secondary',
-            'bg-green-100 text-green-800': variant === 'success',
-            'bg-yellow-100 text-yellow-800': variant === 'warning',
-            'bg-red-100 text-red-800': variant === 'error',
-            'border border-gray-300 text-gray-700 bg-transparent': variant === 'outline',
-          },
-
-          className
-        )}
-        {...props}
-      />
-    );
-  }
-);
-
-Badge.displayName = 'Badge';
-
-// Skill level badge helper
-export function SkillLevelBadge({
-  level,
-  className,
-}: {
-  level: 'beginner' | 'intermediate' | 'advanced' | 'expert';
-  className?: string;
-}) {
-  const variantMap = {
-    beginner: 'secondary',
-    intermediate: 'default',
-    advanced: 'success',
-    expert: 'warning',
-  } as const;
-
-  const labelMap = {
-    beginner: 'Beginner',
-    intermediate: 'Intermediate',
-    advanced: 'Advanced',
-    expert: 'Expert',
-  };
-
+function SkillLevelBadge({ level }: { level: SkillLevel }) {
+  const config = skillLevelConfig[level];
   return (
-    <Badge variant={variantMap[level]} className={className}>
-      {labelMap[level]}
-    </Badge>
+    <span
+      className={cn(
+        'inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium',
+        config.className
+      )}
+    >
+      {config.label}
+    </span>
   );
 }
+
+export { Badge, badgeVariants, SkillLevelBadge }

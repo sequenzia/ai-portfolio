@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { portfolioContent } from '@/lib/content/portfolio';
-import { Card, CardContent } from '@/components/ui/Card';
+import { Card, CardContent } from '@/components/ui/card';
 import type { CanvasData } from '@/lib/content/types';
 
 interface BioCardProps {

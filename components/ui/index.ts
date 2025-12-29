@@ -1,3 +1,3 @@
-export { Button, type ButtonProps } from './Button';
-export { Card, CardHeader, CardContent, CardFooter, type CardProps } from './Card';
-export { Badge, SkillLevelBadge, type BadgeProps } from './Badge';
+export { Button, type ButtonProps } from './button';
+export { Card, CardHeader, CardContent, CardFooter, type CardProps } from './card';
+export { Badge, SkillLevelBadge, type BadgeProps } from './badge';

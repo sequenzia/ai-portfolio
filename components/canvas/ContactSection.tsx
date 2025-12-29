@@ -2,8 +2,8 @@
 
 import { motion } from 'framer-motion';
 import { portfolioContent } from '@/lib/content/portfolio';
-import { Card, CardContent } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import type { CanvasData } from '@/lib/content/types';
 
 interface ContactSectionProps {
