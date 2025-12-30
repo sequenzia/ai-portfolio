@@ -14,12 +14,12 @@ Traditional portfolios force visitors to hunt through pages for relevant informa
 
 ### High-Level Flow
 
-```
+```markdown
 User asks a question
-  → AI processes the request
-    → AI decides whether to show visual content
-      → Response streams back with text and/or rendered portfolio sections
-        → User sees conversational answer with inline visual content
+→ AI processes the request
+→ AI decides whether to show visual content
+→ Response streams back with text and/or rendered portfolio sections
+→ User sees conversational answer with inline visual content
 ```
 
 ### The Core Concept: Tool Calling for Content
@@ -51,53 +51,53 @@ A parser (`lib/content/parsePortfolio.ts`) transforms this markdown into typed T
 
 ### Data Flow Diagram
 
-```
+```markdown
 ┌─────────────────────┐
-│  portfolio.md       │  ← Single source of truth
+│ portfolio.md │ ← Single source of truth
 └─────────┬───────────┘
-          │
-          ▼
+│
+▼
 ┌─────────────────────┐
-│  parsePortfolio.ts  │  ← Markdown → TypeScript
+│ parsePortfolio.ts │ ← Markdown → TypeScript
 └─────────┬───────────┘
-          │
-          ▼
+│
+▼
 ┌─────────────────────┐
-│  PortfolioContent   │  ← Typed data object
+│ PortfolioContent │ ← Typed data object
 └─────────┬───────────┘
-          │
-    ┌─────┴─────┐
-    ▼           ▼
-┌────────┐  ┌────────────┐
-│ AI     │  │ Canvas     │
-│ Prompt │  │ Components │
-└────────┘  └────────────┘
+│
+┌─────┴─────┐
+▼ ▼
+┌────────┐ ┌────────────┐
+│ AI │ │ Canvas │
+│ Prompt │ │ Components │
+└────────┘ └────────────┘
 ```
 
 ### Frontend Architecture
 
-```
+```markdown
 AppLayout
-  └── ChatContainer
-        ├── Message List (scrollable)
-        │     ├── UserMessage
-        │     └── AssistantMessage
-        │           ├── Text Response
-        │           └── ContentBlock (from tool calls)
-        │                 └── Canvas Component (Bio, Experience, etc.)
-        ├── Suggested Prompts
-        └── Input Area
+└── ChatContainer
+├── Message List (scrollable)
+│ ├── UserMessage
+│ └── AssistantMessage
+│ ├── Text Response
+│ └── ContentBlock (from tool calls)
+│ └── Canvas Component (Bio, Experience, etc.)
+├── Suggested Prompts
+└── Input Area
 ```
 
 ### Backend Architecture
 
-```
+```markdown
 POST /api/chat
-  → Receive messages
-  → Build system prompt with portfolio context
-  → Call OpenAI (gpt-4o-mini) via Vercel AI SDK
-  → Stream response with text and tool calls
-  → Return streaming response
+→ Receive messages
+→ Build system prompt with portfolio context
+→ Call OpenAI (gpt-4o-mini) via Vercel AI SDK
+→ Stream response with text and tool calls
+→ Return streaming response
 ```
 
 ---
@@ -106,35 +106,35 @@ POST /api/chat
 
 ### Chat System
 
-| Component | Location | Purpose |
-|-----------|----------|---------|
-| `usePortfolioChat` | `hooks/usePortfolioChat.ts` | React hook wrapping Vercel AI SDK's `useChat` with tool call handling |
-| `ChatContainer` | `components/chat/ChatContainer.tsx` | Main chat UI with messages, input, and suggested prompts |
-| `ContentBlock` | `components/chat/ContentBlock.tsx` | Routes tool calls to appropriate canvas components |
+| Component          | Location                            | Purpose                                                               |
+| ------------------ | ----------------------------------- | --------------------------------------------------------------------- |
+| `usePortfolioChat` | `hooks/usePortfolioChat.ts`         | React hook wrapping Vercel AI SDK's `useChat` with tool call handling |
+| `ChatContainer`    | `components/chat/ChatContainer.tsx` | Main chat UI with messages, input, and suggested prompts              |
+| `ContentBlock`     | `components/chat/ContentBlock.tsx`  | Routes tool calls to appropriate canvas components                    |
 
 ### Canvas Components (Visual Content)
 
-| Component | Renders |
-|-----------|---------|
-| `BioCard` | Profile card with photo, title, summary, highlights, social links |
+| Component            | Renders                                                           |
+| -------------------- | ----------------------------------------------------------------- |
+| `BioCard`            | Profile card with photo, title, summary, highlights, social links |
 | `ExperienceTimeline` | Work history as a visual timeline with achievements and tech tags |
-| `ProjectGrid` | Project cards with descriptions, technologies, and links |
-| `EducationList` | Academic background with degrees and honors |
-| `SkillsMatrix` | Skills organized by category with proficiency levels |
-| `ContactSection` | Email, calendar booking, and social media links |
+| `ProjectGrid`        | Project cards with descriptions, technologies, and links          |
+| `EducationList`      | Academic background with degrees and honors                       |
+| `SkillsMatrix`       | Skills organized by category with proficiency levels              |
+| `ContactSection`     | Email, calendar booking, and social media links                   |
 
 ### AI Integration
 
-| File | Purpose |
-|------|---------|
+| File                    | Purpose                                         |
+| ----------------------- | ----------------------------------------------- |
 | `app/api/chat/route.ts` | Streaming chat endpoint with OpenAI integration |
-| `lib/ai/tools.ts` | Zod schema defining the `renderCanvas` tool |
+| `lib/ai/tools.ts`       | Zod schema defining the `renderCanvas` tool     |
 
 ---
 
 ## The Tool Calling System
 
-### How It Works
+### Tool Calling - How It Works
 
 1. **User sends message** → Frontend calls `/api/chat`
 2. **API builds context** → System prompt includes full portfolio data
@@ -149,11 +149,13 @@ POST /api/chat
 The system prompt instructs the AI:
 
 **Use the tool when:**
+
 - User asks about specific portfolio sections
 - Showing visual content adds value to the response
 - User wants to see projects, experience, skills, etc.
 
 **Don't use the tool when:**
+
 - Answering simple factual questions
 - Greeting or general conversation
 - Information can be conveyed in text alone
@@ -165,28 +167,28 @@ The tool supports smart filtering:
 ```typescript
 renderCanvas({
   type: "projects",
-  filter: "ai"  // Shows only AI-related projects
-})
+  filter: "ai", // Shows only AI-related projects
+});
 
 renderCanvas({
   type: "experience",
-  highlightId: "exp-1"  // Highlights specific job entry
-})
+  highlightId: "exp-1", // Highlights specific job entry
+});
 ```
 
 ---
 
 ## Tech Stack
 
-| Layer | Technology |
-|-------|------------|
-| Framework | Next.js 15 (App Router) |
-| Language | TypeScript |
-| AI | Vercel AI SDK v6 + OpenAI (gpt-4o-mini) |
-| Styling | Tailwind CSS |
-| Animations | Framer Motion |
-| Validation | Zod |
-| Testing | Vitest + Testing Library |
+| Layer      | Technology                              |
+| ---------- | --------------------------------------- |
+| Framework  | Next.js 15 (App Router)                 |
+| Language   | TypeScript                              |
+| AI         | Vercel AI SDK v6 + OpenAI (gpt-4o-mini) |
+| Styling    | Tailwind CSS                            |
+| Animations | Framer Motion                           |
+| Validation | Zod                                     |
+| Testing    | Vitest + Testing Library                |
 
 ---
 
@@ -223,42 +225,42 @@ renderCanvas({
 
 ## File Structure Reference
 
-```
+```markdown
 ai-portfolio/
 ├── app/
-│   ├── api/chat/route.ts      # Chat API endpoint
-│   ├── layout.tsx             # Root layout
-│   ├── page.tsx               # Home page
-│   └── globals.css            # Global styles
+│ ├── api/chat/route.ts # Chat API endpoint
+│ ├── layout.tsx # Root layout
+│ ├── page.tsx # Home page
+│ └── globals.css # Global styles
 ├── components/
-│   ├── canvas/                # Portfolio content renderers
-│   │   ├── BioCard.tsx
-│   │   ├── ExperienceTimeline.tsx
-│   │   ├── ProjectGrid.tsx
-│   │   ├── EducationList.tsx
-│   │   ├── SkillsMatrix.tsx
-│   │   └── ContactSection.tsx
-│   ├── chat/                  # Chat interface
-│   │   ├── ChatContainer.tsx
-│   │   ├── ContentBlock.tsx
-│   │   ├── Message.tsx
-│   │   └── MessageList.tsx
-│   ├── layout/                # App structure
-│   │   └── AppLayout.tsx
-│   └── ui/                    # Reusable components
+│ ├── canvas/ # Portfolio content renderers
+│ │ ├── BioCard.tsx
+│ │ ├── ExperienceTimeline.tsx
+│ │ ├── ProjectGrid.tsx
+│ │ ├── EducationList.tsx
+│ │ ├── SkillsMatrix.tsx
+│ │ └── ContactSection.tsx
+│ ├── chat/ # Chat interface
+│ │ ├── ChatContainer.tsx
+│ │ ├── ContentBlock.tsx
+│ │ ├── Message.tsx
+│ │ └── MessageList.tsx
+│ ├── layout/ # App structure
+│ │ └── AppLayout.tsx
+│ └── ui/ # Reusable components
 ├── content/
-│   └── portfolio.md           # Portfolio data (source of truth)
+│ └── portfolio.md # Portfolio data (source of truth)
 ├── hooks/
-│   └── usePortfolioChat.ts    # Chat hook
+│ └── usePortfolioChat.ts # Chat hook
 ├── lib/
-│   ├── ai/
-│   │   └── tools.ts           # Tool definitions
-│   └── content/
-│       ├── parsePortfolio.ts  # Markdown parser
-│       ├── portfolio.ts       # Exported data singleton
-│       └── types.ts           # TypeScript interfaces
+│ ├── ai/
+│ │ └── tools.ts # Tool definitions
+│ └── content/
+│ ├── parsePortfolio.ts # Markdown parser
+│ ├── portfolio.ts # Exported data singleton
+│ └── types.ts # TypeScript interfaces
 └── stores/
-    └── canvasStore.ts         # Zustand store (legacy)
+└── canvasStore.ts # Zustand store (legacy)
 ```
 
 ---
