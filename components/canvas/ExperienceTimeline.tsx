@@ -27,19 +27,18 @@ export function ExperienceTimeline({ data }: ExperienceTimelineProps) {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <motion.div
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="flex items-center justify-between"
-      >
-        <h2 className="text-2xl font-bold text-foreground">Experience</h2>
-        {data?.filter && (
+      {/* Filter badge if applicable */}
+      {data?.filter && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="flex justify-end"
+        >
           <Badge variant="outline">
             Filtered: {data.filter}
           </Badge>
-        )}
-      </motion.div>
+        </motion.div>
+      )}
 
       {/* Timeline */}
       <div className="relative">

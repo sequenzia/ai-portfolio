@@ -15,17 +15,7 @@ export function EducationList({ data }: EducationListProps) {
   const education = portfolioContent.education;
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <motion.div
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-      >
-        <h2 className="text-2xl font-bold text-foreground">Education</h2>
-      </motion.div>
-
-      {/* Education cards */}
-      <div className="space-y-4">
+    <div className="space-y-4">
         {education.map((edu, index) => (
           <motion.div
             key={edu.id}
@@ -93,7 +83,6 @@ export function EducationList({ data }: EducationListProps) {
             </Card>
           </motion.div>
         ))}
-      </div>
     </div>
   );
 }

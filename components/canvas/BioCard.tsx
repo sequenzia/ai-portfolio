@@ -14,15 +14,6 @@ export function BioCard(_props: BioCardProps) {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <motion.div
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="flex items-center gap-2"
-      >
-        <h2 className="text-2xl font-bold text-foreground">About Me</h2>
-      </motion.div>
-
       {/* Main bio card */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}

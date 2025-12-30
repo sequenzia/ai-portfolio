@@ -30,19 +30,16 @@ export function ProjectGrid({ data }: ProjectGridProps) {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
+      {/* Info bar */}
       <motion.div
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         className="flex items-center justify-between flex-wrap gap-4"
       >
-        <div>
-          <h2 className="text-2xl font-bold text-foreground">Projects</h2>
-          <p className="text-muted-foreground text-sm mt-1">
-            {projects.length} project{projects.length !== 1 ? 's' : ''}
-            {data?.filter && ` matching "${data.filter}"`}
-          </p>
-        </div>
+        <p className="text-muted-foreground text-sm">
+          {projects.length} project{projects.length !== 1 ? 's' : ''}
+          {data?.filter && ` matching "${data.filter}"`}
+        </p>
         {data?.filter && (
           <Badge variant="outline">
             Filtered: {data.filter}

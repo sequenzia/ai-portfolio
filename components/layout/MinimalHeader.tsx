@@ -4,7 +4,7 @@ import { portfolioContent } from '@/lib/content/portfolio';
 import { cn } from '@/lib/utils/cn';
 import { useCanvasStore } from '@/stores/canvasStore';
 import { useThemeStore } from '@/stores/themeStore';
-import { ChevronLeft, Home, Sun, Moon } from 'lucide-react';
+import { ChevronLeft, Sun, Moon } from 'lucide-react';
 
 interface MinimalHeaderProps {
   className?: string;
@@ -16,7 +16,6 @@ export function MinimalHeader({ className }: MinimalHeaderProps) {
   const { theme, toggleTheme } = useThemeStore();
 
   const showBackButton = currentView !== 'welcome' && history.length > 0;
-  const showHomeButton = currentView !== 'welcome';
 
   return (
     <header
@@ -25,39 +24,32 @@ export function MinimalHeader({ className }: MinimalHeaderProps) {
         className
       )}
     >
-      {/* Left side - navigation */}
-      <div className="flex items-center gap-2">
+      {/* Left side - branding as home link */}
+      <div className="flex items-center gap-3">
         {showBackButton && (
           <button
             onClick={goBack}
-            className="p-2 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+            className="p-2 -ml-2 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
             title="Go back"
           >
             <ChevronLeft className="h-5 w-5" />
           </button>
         )}
-        {showHomeButton && (
-          <button
-            onClick={reset}
-            className="p-2 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
-            title="Go home"
-          >
-            <Home className="h-5 w-5" />
-          </button>
-        )}
-      </div>
-
-      {/* Center - branding */}
-      <div className="flex items-center gap-3">
-        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center text-white font-bold text-sm shadow-sm">
-          {bio.name
-            .split(' ')
-            .map((n) => n[0])
-            .join('')}
-        </div>
-        <div className="hidden sm:block">
-          <h1 className="font-semibold text-foreground text-sm">{bio.name}</h1>
-        </div>
+        <button
+          onClick={reset}
+          className="flex items-center gap-3 hover:opacity-80 transition-opacity"
+          title="Go home"
+        >
+          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center text-white font-bold text-sm shadow-sm">
+            {bio.name
+              .split(' ')
+              .map((n) => n[0])
+              .join('')}
+          </div>
+          <h1 className="hidden sm:block font-semibold text-foreground text-sm">
+            {bio.name}
+          </h1>
+        </button>
       </div>
 
       {/* Right side - theme toggle and status */}

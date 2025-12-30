@@ -51,7 +51,7 @@ export function ContentBlock({ type, filter, highlightId }: ContentBlockProps) {
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3, ease: 'easeOut' }}
-      className="mt-4 rounded-lg bg-gray-50 p-4"
+      className="mt-4 rounded-lg bg-muted/50 p-4"
     >
       <ContentComponent data={data} />
     </motion.div>

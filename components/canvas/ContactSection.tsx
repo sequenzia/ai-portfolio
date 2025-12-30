@@ -15,16 +15,14 @@ export function ContactSection(_props: ContactSectionProps) {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <motion.div
+      {/* Intro */}
+      <motion.p
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
+        className="text-muted-foreground"
       >
-        <h2 className="text-2xl font-bold text-foreground">Get in Touch</h2>
-        <p className="text-muted-foreground mt-1">
-          I'd love to hear from you. Let's connect!
-        </p>
-      </motion.div>
+        I'd love to hear from you. Let's connect!
+      </motion.p>
 
       {/* Contact cards */}
       <div className="grid gap-4 md:grid-cols-2">

@@ -27,18 +27,15 @@ export function SkillsMatrix({ data }: SkillsMatrixProps) {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
+      {/* Info bar */}
       <motion.div
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         className="flex items-center justify-between"
       >
-        <div>
-          <h2 className="text-2xl font-bold text-foreground">Skills</h2>
-          <p className="text-muted-foreground text-sm mt-1">
-            Technical proficiencies across different domains
-          </p>
-        </div>
+        <p className="text-muted-foreground text-sm">
+          Technical proficiencies across different domains
+        </p>
         {data?.filter && (
           <Badge variant="outline">
             Filtered: {data.filter}
