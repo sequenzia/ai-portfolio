@@ -100,6 +100,7 @@ interface CommandPaletteProps {
 export function CommandPalette({ className }: CommandPaletteProps) {
   const [input, setInput] = useState('');
   const inputRef = useRef<HTMLTextAreaElement>(null!);
+  const fromSuggestionRef = useRef(false);
   const { isMobile } = useBreakpoints();
 
   const { isExpanded, uiState, expand, collapse, setUIState } =
@@ -139,7 +140,7 @@ export function CommandPalette({ className }: CommandPaletteProps) {
     },
   });
 
-  // Sync chat status with UI state
+  // Sync chat status with UI state and auto-collapse when done (only for suggestion clicks)
   useEffect(() => {
     if (status === 'submitted') {
       setUIState('thinking');
@@ -147,8 +148,13 @@ export function CommandPalette({ className }: CommandPaletteProps) {
       setUIState('streaming');
     } else if (status === 'ready') {
       setUIState('idle');
+      // Only auto-collapse if message was from a suggestion pill click
+      if (fromSuggestionRef.current) {
+        collapse();
+        fromSuggestionRef.current = false;
+      }
     }
-  }, [status, setUIState]);
+  }, [status, setUIState, collapse]);
 
   // Focus input when expanded
   useEffect(() => {
@@ -194,10 +200,11 @@ export function CommandPalette({ className }: CommandPaletteProps) {
 
   const handleSuggestionClick = useCallback(
     (prompt: string) => {
+      fromSuggestionRef.current = true;
       sendMessage({ text: prompt });
-      expand();
+      // Don't expand - let the palette stay collapsed while content renders
     },
-    [sendMessage, expand]
+    [sendMessage]
   );
 
   // Get latest assistant message
