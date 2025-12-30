@@ -11,6 +11,13 @@ import {
   Send,
   ChevronUp,
   MessageSquare,
+  User,
+  Briefcase,
+  FolderKanban,
+  Wrench,
+  GraduationCap,
+  Mail,
+  type LucideIcon,
 } from 'lucide-react';
 import { useChat } from '@ai-sdk/react';
 import { DefaultChatTransport } from 'ai';
@@ -23,11 +30,57 @@ import {
 import { useCanvasStore } from '@/stores/canvasStore';
 import type { RenderCanvasParams } from '@/lib/ai/tools';
 
-const SUGGESTED_PROMPTS = [
-  { label: 'About Me', prompt: 'Tell me about yourself' },
-  { label: 'Experience', prompt: 'What is your work experience?' },
-  { label: 'Projects', prompt: 'Show me your projects' },
-  { label: 'Skills', prompt: 'What are your technical skills?' },
+interface SuggestedPrompt {
+  label: string;
+  prompt: string;
+  icon: LucideIcon;
+  color: string;
+  hoverColor: string;
+}
+
+const SUGGESTED_PROMPTS: SuggestedPrompt[] = [
+  {
+    label: 'About Me',
+    prompt: 'Tell me about yourself',
+    icon: User,
+    color: 'text-purple-400',
+    hoverColor: 'hover:bg-purple-500/20 hover:border-purple-500/50',
+  },
+  {
+    label: 'Experience',
+    prompt: 'What is your work experience?',
+    icon: Briefcase,
+    color: 'text-blue-400',
+    hoverColor: 'hover:bg-blue-500/20 hover:border-blue-500/50',
+  },
+  {
+    label: 'Projects',
+    prompt: 'Show me your projects',
+    icon: FolderKanban,
+    color: 'text-green-400',
+    hoverColor: 'hover:bg-green-500/20 hover:border-green-500/50',
+  },
+  {
+    label: 'Skills',
+    prompt: 'What are your technical skills?',
+    icon: Wrench,
+    color: 'text-orange-400',
+    hoverColor: 'hover:bg-orange-500/20 hover:border-orange-500/50',
+  },
+  {
+    label: 'Education',
+    prompt: 'What is your education background?',
+    icon: GraduationCap,
+    color: 'text-cyan-400',
+    hoverColor: 'hover:bg-cyan-500/20 hover:border-cyan-500/50',
+  },
+  {
+    label: 'Contact',
+    prompt: 'How can I contact you?',
+    icon: Mail,
+    color: 'text-pink-400',
+    hoverColor: 'hover:bg-pink-500/20 hover:border-pink-500/50',
+  },
 ];
 
 const viewLabels: Record<string, string> = {
@@ -256,39 +309,47 @@ function CommandPill({ uiState, onClick, onSuggestionClick }: CommandPillProps) 
     >
       {/* Suggestions */}
       <div className="flex flex-wrap justify-center gap-2">
-        {SUGGESTED_PROMPTS.map(({ label, prompt }) => (
-          <button
+        {SUGGESTED_PROMPTS.map(({ label, prompt, icon: Icon, color, hoverColor }, index) => (
+          <motion.button
             key={label}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.2, delay: index * 0.05 }}
             onClick={() => onSuggestionClick(prompt)}
-            className="rounded-full bg-background/80 px-3 py-1.5 text-sm text-muted-foreground shadow-sm border border-border/50 hover:bg-background hover:border-border transition-colors backdrop-blur-sm"
+            className={cn(
+              'group flex items-center gap-2 rounded-full bg-background/80 px-3 py-1.5 text-sm shadow-sm border border-border/50 backdrop-blur-sm transition-all duration-200',
+              hoverColor
+            )}
           >
-            {label}
-          </button>
+            <Icon className={cn('h-3.5 w-3.5 transition-transform group-hover:scale-110', color)} />
+            <span className="text-muted-foreground group-hover:text-foreground transition-colors">
+              {label}
+            </span>
+          </motion.button>
         ))}
       </div>
 
       {/* Pill button */}
-      <button
+      <motion.button
         onClick={onClick}
+        whileHover={{ scale: 1.02 }}
+        whileTap={{ scale: 0.98 }}
         className={cn(
-          'flex items-center gap-3 rounded-full bg-card px-5 py-3 shadow-elevated border-2 transition-all hover:shadow-lg',
+          'group flex items-center gap-3 rounded-full bg-card px-5 py-3 shadow-elevated border-2 transition-all hover:shadow-lg',
           getBorderClass()
         )}
       >
         {uiState === 'thinking' ? (
-          <Loader2 className="h-5 w-5 animate-spin text-primary-500" />
+          <Loader2 className="h-5 w-5 animate-spin text-primary" />
         ) : uiState === 'error' ? (
           <AlertCircle className="h-5 w-5 text-red-500" />
         ) : (
-          <Search className="h-5 w-5 text-muted-foreground" />
+          <Search className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors" />
         )}
-        <span className="text-sm text-muted-foreground">
+        <span className="text-sm text-muted-foreground group-hover:text-foreground transition-colors">
           Ask me anything...
         </span>
-        <kbd className="hidden rounded bg-muted px-2 py-0.5 text-xs text-muted-foreground sm:inline-block">
-          {'\u2318'}K
-        </kbd>
-      </button>
+      </motion.button>
     </motion.div>
   );
 }
@@ -531,13 +592,19 @@ function MobileBottomSheet({
 
         {/* Suggestions */}
         <div className="flex flex-wrap gap-2">
-          {SUGGESTED_PROMPTS.map(({ label, prompt }) => (
+          {SUGGESTED_PROMPTS.map(({ label, prompt, icon: Icon, color, hoverColor }) => (
             <button
               key={label}
               onClick={() => onSuggestionClick(prompt)}
-              className="rounded-full bg-muted px-3 py-1.5 text-sm text-muted-foreground hover:bg-muted/80 transition-colors"
+              className={cn(
+                'group flex items-center gap-2 rounded-full bg-muted px-3 py-1.5 text-sm transition-all duration-200',
+                hoverColor
+              )}
             >
-              {label}
+              <Icon className={cn('h-3.5 w-3.5', color)} />
+              <span className="text-muted-foreground group-hover:text-foreground transition-colors">
+                {label}
+              </span>
             </button>
           ))}
         </div>

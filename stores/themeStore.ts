@@ -2,12 +2,13 @@
 
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { themeConfig, type Theme } from '@/lib/config/theme';
+import { themeConfig, themes, type Theme } from '@/lib/config/theme';
 
 interface ThemeStore {
   theme: Theme;
   setTheme: (theme: Theme) => void;
   toggleTheme: () => void;
+  cycleTheme: () => void;
 }
 
 export const useThemeStore = create<ThemeStore>()(
@@ -22,6 +23,13 @@ export const useThemeStore = create<ThemeStore>()(
       toggleTheme: () => {
         const current = get().theme;
         set({ theme: current === 'light' ? 'dark' : 'light' });
+      },
+
+      cycleTheme: () => {
+        const current = get().theme;
+        const currentIndex = themes.indexOf(current);
+        const nextIndex = (currentIndex + 1) % themes.length;
+        set({ theme: themes[nextIndex] });
       },
     }),
     {

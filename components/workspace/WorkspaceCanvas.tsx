@@ -73,15 +73,15 @@ export function WorkspaceCanvas({ className }: WorkspaceCanvasProps) {
           transition={{ duration: 0.3, ease: 'easeOut' }}
           className="h-full overflow-auto"
         >
-          {/* Content header */}
+          {/* Content header - full width */}
           <div className="sticky top-0 z-10 bg-surface-canvas/80 backdrop-blur-sm border-b border-border/50 px-6 py-4">
-            <h1 className="text-2xl font-semibold text-foreground">
+            <h1 className="text-2xl font-semibold text-foreground max-w-full lg:max-w-[90%] mx-auto">
               {viewTitles[currentView]}
             </h1>
           </div>
 
-          {/* Content area */}
-          <div className="p-6">
+          {/* Content area - constrained width */}
+          <div className="p-6 max-w-full lg:max-w-[90%] mx-auto">
             <ContentComponent data={data} />
           </div>
         </motion.div>
@@ -97,40 +97,100 @@ interface WelcomeViewProps {
 
 function WelcomeView({ name, title }: WelcomeViewProps) {
   return (
-    <div className="flex h-full items-center justify-center">
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.5, ease: 'easeOut' }}
-        className="text-center px-6"
-      >
-        {/* Decorative gradient blob */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-gradient-to-br from-primary-200/30 via-primary-100/20 to-transparent rounded-full blur-3xl" />
-        </div>
+    <div className="flex h-full items-center justify-center relative overflow-hidden">
+      {/* Animated background elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <motion.div
+          className="absolute top-1/4 -left-20 w-72 h-72 bg-primary/5 rounded-full blur-3xl"
+          animate={{
+            x: [0, 30, 0],
+            y: [0, -20, 0],
+          }}
+          transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
+        />
+        <motion.div
+          className="absolute bottom-1/4 -right-20 w-96 h-96 bg-accent/5 rounded-full blur-3xl"
+          animate={{
+            x: [0, -20, 0],
+            y: [0, 30, 0],
+          }}
+          transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut' }}
+        />
+      </div>
 
-        {/* Content */}
-        <div className="relative z-10">
-          <div className="inline-flex items-center gap-2 rounded-full bg-primary-100/50 px-4 py-2 mb-6">
-            <Sparkles className="h-4 w-4 text-primary-600" />
-            <span className="text-sm font-medium text-primary-700">
-              AI-Powered Portfolio
-            </span>
-          </div>
+      <div className="text-center px-6 relative z-10">
+        {/* Animated badge */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.1 }}
+          className="inline-flex items-center gap-2 rounded-full bg-primary/10 border border-primary/20 px-4 py-2 mb-8"
+        >
+          <motion.div
+            animate={{ rotate: [0, 15, -15, 0] }}
+            transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+          >
+            <Sparkles className="h-4 w-4 text-primary" />
+          </motion.div>
+          <span className="text-sm font-medium text-primary">
+            AI-Powered Portfolio
+          </span>
+        </motion.div>
 
-          <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
-            {name}
-          </h1>
+        {/* Name with gradient */}
+        <motion.h1
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-foreground via-foreground to-muted-foreground bg-clip-text"
+        >
+          {name}
+        </motion.h1>
 
-          <p className="text-xl text-muted-foreground mb-8 max-w-md mx-auto">
+        {/* Animated title with typing cursor effect */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+          className="flex items-center justify-center gap-2 mb-10"
+        >
+          <div className="h-px w-8 bg-gradient-to-r from-transparent to-muted-foreground/50" />
+          <p className="text-xl md:text-2xl text-muted-foreground font-light tracking-wide">
             {title}
           </p>
+          <div className="h-px w-8 bg-gradient-to-l from-transparent to-muted-foreground/50" />
+        </motion.div>
 
+        {/* CTA hint with animated arrow */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5, delay: 0.5 }}
+          className="flex flex-col items-center gap-3"
+        >
           <p className="text-sm text-muted-foreground">
-            Use the command palette below to explore
+            Select a topic below or ask me anything
           </p>
-        </div>
-      </motion.div>
+          <motion.div
+            animate={{ y: [0, 6, 0] }}
+            transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
+            className="text-muted-foreground/50"
+          >
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M12 5v14M19 12l-7 7-7-7" />
+            </svg>
+          </motion.div>
+        </motion.div>
+      </div>
     </div>
   );
 }

@@ -53,33 +53,75 @@
     --message-assistant: 210 40% 96%;
   }
   .dark {
-    --background: 0 0% 3.9%;
+    --background: 0 0% 9%;
     --foreground: 0 0% 98%;
-    --card: 0 0% 3.9%;
+    --card: 0 0% 11%;
     --card-foreground: 0 0% 98%;
-    --popover: 0 0% 3.9%;
+    --popover: 0 0% 11%;
     --popover-foreground: 0 0% 98%;
     --primary: 0 0% 98%;
     --primary-foreground: 0 0% 9%;
-    --secondary: 0 0% 14.9%;
+    --secondary: 0 0% 17%;
     --secondary-foreground: 0 0% 98%;
-    --muted: 0 0% 14.9%;
+    --muted: 0 0% 17%;
     --muted-foreground: 0 0% 63.9%;
-    --accent: 0 0% 14.9%;
+    --accent: 0 0% 17%;
     --accent-foreground: 0 0% 98%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 14.9%;
-    --input: 0 0% 14.9%;
+    --border: 0 0% 18%;
+    --input: 0 0% 17%;
     --ring: 0 0% 83.1%;
     --chart-1: 220 70% 50%;
     --chart-2: 160 60% 45%;
     --chart-3: 30 80% 55%;
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
-    --surface-canvas: 0 0% 7%;
+    --surface-canvas: 0 0% 9%;
     --message-user: 217 91% 50%;
-    --message-assistant: 0 0% 14.9%;
+    --message-assistant: 0 0% 17%;
+  }
+  .dracula {
+    /* Dracula Theme - https://draculatheme.com/spec */
+    /* Background #282A36 | Foreground #F8F8F2 */
+    --background: 231 15% 18%;
+    --foreground: 60 30% 96%;
+    /* Cards use ANSI Black #21222C for depth */
+    --card: 231 15% 15%;
+    --card-foreground: 60 30% 96%;
+    --popover: 231 15% 15%;
+    --popover-foreground: 60 30% 96%;
+    /* Primary: Pink #FF79C6 - the iconic Dracula keyword color */
+    --primary: 326 100% 74%;
+    --primary-foreground: 231 15% 18%;
+    /* Secondary: Current Line #44475A */
+    --secondary: 232 14% 31%;
+    --secondary-foreground: 60 30% 96%;
+    /* Muted: Comment #6272A4 */
+    --muted: 232 14% 31%;
+    --muted-foreground: 225 27% 51%;
+    /* Accent: Purple #BD93F9 - classes, types, variables */
+    --accent: 265 89% 78%;
+    --accent-foreground: 231 15% 18%;
+    /* Destructive: Red #FF5555 */
+    --destructive: 0 100% 67%;
+    --destructive-foreground: 60 30% 96%;
+    /* Border: slightly lighter than background for subtle definition */
+    --border: 232 14% 25%;
+    --input: 232 14% 31%;
+    /* Ring: Cyan #8BE9FD for focus states */
+    --ring: 191 97% 77%;
+    /* Charts: Full Dracula palette - Purple, Green, Cyan, Orange, Pink */
+    --chart-1: 265 89% 78%;
+    --chart-2: 135 94% 65%;
+    --chart-3: 191 97% 77%;
+    --chart-4: 31 100% 71%;
+    --chart-5: 326 100% 74%;
+    /* Surface canvas matches background */
+    --surface-canvas: 231 15% 18%;
+    /* Messages: Purple for user, Current Line for assistant */
+    --message-user: 265 89% 78%;
+    --message-assistant: 232 14% 25%;
   }
 }
 

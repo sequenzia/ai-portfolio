@@ -3,7 +3,7 @@
  * Defines available themes and the default theme setting
  */
 
-export const themes = ["light", "dark"] as const;
+export const themes = ["light", "dark", "dracula"] as const;
 
 export type Theme = (typeof themes)[number];
 

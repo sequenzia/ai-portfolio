@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useThemeStore } from '@/stores/themeStore';
-import { themeConfig } from '@/lib/config/theme';
+import { themeConfig, themes } from '@/lib/config/theme';
 
 interface ThemeProviderProps {
   children: React.ReactNode;
@@ -23,8 +23,8 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
 
     const root = document.documentElement;
 
-    // Remove existing theme classes
-    root.classList.remove('light', 'dark');
+    // Remove all existing theme classes
+    themes.forEach((t) => root.classList.remove(t));
 
     // Apply current theme
     root.classList.add(theme);

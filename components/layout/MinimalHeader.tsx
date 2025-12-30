@@ -4,18 +4,31 @@ import { portfolioContent } from '@/lib/content/portfolio';
 import { cn } from '@/lib/utils/cn';
 import { useCanvasStore } from '@/stores/canvasStore';
 import { useThemeStore } from '@/stores/themeStore';
-import { ChevronLeft, Sun, Moon } from 'lucide-react';
+import { ChevronLeft, Sun, Moon, Palette } from 'lucide-react';
 
 interface MinimalHeaderProps {
   className?: string;
 }
 
+const themeIcons = {
+  light: Moon,
+  dark: Palette,
+  dracula: Sun,
+};
+
+const themeLabels = {
+  light: 'Dark',
+  dark: 'Dracula',
+  dracula: 'Light',
+};
+
 export function MinimalHeader({ className }: MinimalHeaderProps) {
   const { bio } = portfolioContent;
   const { currentView, goBack, reset, history } = useCanvasStore();
-  const { theme, toggleTheme } = useThemeStore();
+  const { theme, cycleTheme } = useThemeStore();
 
   const showBackButton = currentView !== 'welcome' && history.length > 0;
+  const ThemeIcon = themeIcons[theme];
 
   return (
     <header
@@ -55,15 +68,11 @@ export function MinimalHeader({ className }: MinimalHeaderProps) {
       {/* Right side - theme toggle and status */}
       <div className="flex items-center gap-2">
         <button
-          onClick={toggleTheme}
+          onClick={cycleTheme}
           className="p-2 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
-          title={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
+          title={`Switch to ${themeLabels[theme]} mode`}
         >
-          {theme === 'light' ? (
-            <Moon className="h-4 w-4" />
-          ) : (
-            <Sun className="h-4 w-4" />
-          )}
+          <ThemeIcon className="h-4 w-4" />
         </button>
         <span className="text-xs text-muted-foreground hidden md:block">
           AI Portfolio

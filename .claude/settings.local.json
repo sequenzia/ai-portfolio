@@ -36,7 +36,9 @@
       "mcp__ai-elements__get_ai_elements_component",
       "Bash(npx shadcn@latest init -d)",
       "Bash(npx ai-elements@latest add:*)",
-      "Bash(yes:*)"
+      "Bash(yes:*)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:draculatheme.com)"
     ]
   }
 }
