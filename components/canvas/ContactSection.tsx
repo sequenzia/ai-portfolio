@@ -20,8 +20,8 @@ export function ContactSection(_props: ContactSectionProps) {
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
       >
-        <h2 className="text-2xl font-bold text-gray-900">Get in Touch</h2>
-        <p className="text-gray-500 mt-1">
+        <h2 className="text-2xl font-bold text-foreground">Get in Touch</h2>
+        <p className="text-muted-foreground mt-1">
           I'd love to hear from you. Let's connect!
         </p>
       </motion.div>
@@ -37,12 +37,12 @@ export function ContactSection(_props: ContactSectionProps) {
           <Card variant="elevated" hoverable>
             <CardContent className="p-6">
               <div className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-xl bg-primary-100 flex items-center justify-center">
-                  <MailIcon className="w-6 h-6 text-primary-600" />
+                <div className="w-12 h-12 rounded-xl bg-primary-100 dark:bg-primary-900 flex items-center justify-center">
+                  <MailIcon className="w-6 h-6 text-primary-600 dark:text-primary-400" />
                 </div>
                 <div className="flex-1">
-                  <h3 className="font-semibold text-gray-900">Email</h3>
-                  <p className="text-gray-500 text-sm mb-3">
+                  <h3 className="font-semibold text-foreground">Email</h3>
+                  <p className="text-muted-foreground text-sm mb-3">
                     Send me an email anytime
                   </p>
                   <a
@@ -67,12 +67,12 @@ export function ContactSection(_props: ContactSectionProps) {
             <Card variant="elevated" hoverable>
               <CardContent className="p-6">
                 <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-green-100 flex items-center justify-center">
-                    <CalendarIcon className="w-6 h-6 text-green-600" />
+                  <div className="w-12 h-12 rounded-xl bg-green-100 dark:bg-green-900 flex items-center justify-center">
+                    <CalendarIcon className="w-6 h-6 text-green-600 dark:text-green-400" />
                   </div>
                   <div className="flex-1">
-                    <h3 className="font-semibold text-gray-900">Schedule a Call</h3>
-                    <p className="text-gray-500 text-sm mb-3">
+                    <h3 className="font-semibold text-foreground">Schedule a Call</h3>
+                    <p className="text-muted-foreground text-sm mb-3">
                       Book a 30-minute chat
                     </p>
                     <a
@@ -98,7 +98,7 @@ export function ContactSection(_props: ContactSectionProps) {
       >
         <Card>
           <CardContent className="p-6">
-            <h3 className="font-semibold text-gray-900 mb-4">Connect on Social</h3>
+            <h3 className="font-semibold text-foreground mb-4">Connect on Social</h3>
             <div className="flex flex-wrap gap-3">
               {contact.socialLinks.map((link, index) => (
                 <motion.a
@@ -109,7 +109,7 @@ export function ContactSection(_props: ContactSectionProps) {
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: 0.4 + index * 0.05 }}
-                  className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 hover:text-gray-900 transition-colors"
+                  className="flex items-center gap-2 px-4 py-2 rounded-lg bg-muted text-foreground/80 hover:bg-muted/80 hover:text-foreground transition-colors"
                 >
                   <SocialIcon icon={link.icon} className="w-5 h-5" />
                   <span className="font-medium">{link.platform}</span>
@@ -125,19 +125,19 @@ export function ContactSection(_props: ContactSectionProps) {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.5 }}
-        className="bg-gradient-to-r from-primary-50 to-primary-100 rounded-xl p-6"
+        className="bg-gradient-to-r from-primary-50 to-primary-100 dark:from-primary-950 dark:to-primary-900 rounded-xl p-6"
       >
         <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center text-xl font-bold text-primary-600">
+          <div className="w-12 h-12 rounded-full bg-background flex items-center justify-center text-xl font-bold text-primary-600 dark:text-primary-400">
             {bio.name
               .split(' ')
               .map((n) => n[0])
               .join('')}
           </div>
           <div>
-            <p className="text-gray-900 font-medium">{bio.name}</p>
-            <p className="text-gray-600 text-sm">{bio.title}</p>
-            <p className="text-gray-500 text-sm">{bio.location}</p>
+            <p className="text-foreground font-medium">{bio.name}</p>
+            <p className="text-muted-foreground text-sm">{bio.title}</p>
+            <p className="text-muted-foreground/80 text-sm">{bio.location}</p>
           </div>
         </div>
       </motion.div>

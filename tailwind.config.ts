@@ -27,12 +27,12 @@ export default {
   				foreground: 'hsl(var(--primary-foreground))'
   			},
   			surface: {
-  				chat: '#ffffff',
-  				canvas: '#f8fafc'
+  				chat: 'hsl(var(--background))',
+  				canvas: 'hsl(var(--surface-canvas))'
   			},
   			message: {
-  				user: '#3b82f6',
-  				assistant: '#f1f5f9'
+  				user: 'hsl(var(--message-user))',
+  				assistant: 'hsl(var(--message-assistant))'
   			},
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',

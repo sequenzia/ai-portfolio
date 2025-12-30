@@ -21,7 +21,7 @@ export function EducationList({ data }: EducationListProps) {
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
       >
-        <h2 className="text-2xl font-bold text-gray-900">Education</h2>
+        <h2 className="text-2xl font-bold text-foreground">Education</h2>
       </motion.div>
 
       {/* Education cards */}
@@ -43,7 +43,7 @@ export function EducationList({ data }: EducationListProps) {
                 <div className="flex gap-5">
                   {/* Icon/Logo placeholder */}
                   <div className="flex-shrink-0">
-                    <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-primary-100 to-primary-200 flex items-center justify-center">
+                    <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-primary-100 to-primary-200 dark:from-primary-900 dark:to-primary-800 flex items-center justify-center">
                       <GraduationCapIcon className="w-7 h-7 text-primary-600" />
                     </div>
                   </div>
@@ -52,20 +52,20 @@ export function EducationList({ data }: EducationListProps) {
                   <div className="flex-1">
                     <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-2">
                       <div>
-                        <h3 className="text-lg font-semibold text-gray-900">
+                        <h3 className="text-lg font-semibold text-foreground">
                           {edu.degree}
                         </h3>
-                        <p className="text-primary-600 font-medium">{edu.field}</p>
-                        <p className="text-gray-600">{edu.institution}</p>
+                        <p className="text-primary-600 dark:text-primary-400 font-medium">{edu.field}</p>
+                        <p className="text-muted-foreground">{edu.institution}</p>
                       </div>
-                      <div className="text-sm text-gray-500">
+                      <div className="text-sm text-muted-foreground">
                         {edu.startDate} - {edu.endDate}
                       </div>
                     </div>
 
                     {/* GPA if available */}
                     {edu.gpa && (
-                      <p className="text-sm text-gray-600 mt-2">
+                      <p className="text-sm text-muted-foreground mt-2">
                         GPA: <span className="font-medium">{edu.gpa}</span>
                       </p>
                     )}

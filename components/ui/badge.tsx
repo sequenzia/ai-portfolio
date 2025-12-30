@@ -16,9 +16,9 @@ const badgeVariants = cva(
           "border-transparent bg-destructive text-destructive-foreground shadow hover:bg-destructive/80",
         outline: "text-foreground",
         success:
-          "border-transparent bg-green-100 text-green-800 shadow-sm",
+          "border-transparent bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 shadow-sm",
         warning:
-          "border-transparent bg-yellow-100 text-yellow-800 shadow-sm",
+          "border-transparent bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200 shadow-sm",
       },
       size: {
         default: "px-2.5 py-0.5",
@@ -46,10 +46,10 @@ function Badge({ className, variant, size, ...props }: BadgeProps) {
 type SkillLevel = 'beginner' | 'intermediate' | 'advanced' | 'expert';
 
 const skillLevelConfig: Record<SkillLevel, { label: string; className: string }> = {
-  beginner: { label: 'Beginner', className: 'bg-gray-100 text-gray-700' },
-  intermediate: { label: 'Intermediate', className: 'bg-blue-100 text-blue-700' },
-  advanced: { label: 'Advanced', className: 'bg-green-100 text-green-700' },
-  expert: { label: 'Expert', className: 'bg-yellow-100 text-yellow-700' },
+  beginner: { label: 'Beginner', className: 'bg-muted text-muted-foreground' },
+  intermediate: { label: 'Intermediate', className: 'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300' },
+  advanced: { label: 'Advanced', className: 'bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300' },
+  expert: { label: 'Expert', className: 'bg-yellow-100 dark:bg-yellow-900 text-yellow-700 dark:text-yellow-300' },
 };
 
 function SkillLevelBadge({ level }: { level: SkillLevel }) {

@@ -30,8 +30,8 @@ export function SuggestedPrompts({ onSelect, className }: SuggestedPromptsProps)
             onClick={() => onSelect(prompt)}
             className={cn(
               'inline-flex items-center gap-1.5 rounded-full',
-              'bg-gray-100 px-3 py-1.5 text-sm text-gray-700',
-              'hover:bg-gray-200 hover:text-gray-900',
+              'bg-muted px-3 py-1.5 text-sm text-foreground/80',
+              'hover:bg-muted/80 hover:text-foreground',
               'transition-colors duration-150',
               'focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-1'
             )}
