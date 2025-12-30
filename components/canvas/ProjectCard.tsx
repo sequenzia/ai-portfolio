@@ -18,15 +18,15 @@ export function ProjectCard({ project, index, isHighlighted }: ProjectCardProps)
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.1, duration: 0.3 }}
       className={cn(
-        'group bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden',
+        'group bg-card rounded-xl shadow-sm border border-border overflow-hidden',
         'hover:shadow-md hover:-translate-y-1 transition-all duration-200',
         isHighlighted && 'ring-2 ring-primary-500 shadow-md'
       )}
     >
       {/* Image placeholder */}
-      <div className="h-40 bg-gradient-to-br from-gray-100 to-gray-200 relative overflow-hidden">
+      <div className="h-40 bg-gradient-to-br from-muted to-muted/80 relative overflow-hidden">
         <div className="absolute inset-0 flex items-center justify-center">
-          <span className="text-4xl text-gray-300">
+          <span className="text-4xl text-muted-foreground/50">
             {project.category === 'ai' && '🤖'}
             {project.category === 'open-source' && '🌐'}
             {project.category === 'devops' && '⚙️'}
@@ -46,10 +46,10 @@ export function ProjectCard({ project, index, isHighlighted }: ProjectCardProps)
       <div className="p-5">
         {/* Header */}
         <div className="flex items-start justify-between gap-2 mb-2">
-          <h3 className="text-lg font-semibold text-gray-900 group-hover:text-primary-600 transition-colors">
+          <h3 className="text-lg font-semibold text-foreground group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
             {project.name}
           </h3>
-          <span className="text-xs text-gray-400 whitespace-nowrap">{project.date}</span>
+          <span className="text-xs text-muted-foreground whitespace-nowrap">{project.date}</span>
         </div>
 
         {/* Category */}
@@ -58,7 +58,7 @@ export function ProjectCard({ project, index, isHighlighted }: ProjectCardProps)
         </Badge>
 
         {/* Description */}
-        <p className="text-gray-600 text-sm mb-4 line-clamp-2">
+        <p className="text-muted-foreground text-sm mb-4 line-clamp-2">
           {project.description}
         </p>
 
@@ -77,7 +77,7 @@ export function ProjectCard({ project, index, isHighlighted }: ProjectCardProps)
         </div>
 
         {/* Links */}
-        <div className="flex gap-3 pt-3 border-t border-gray-100">
+        <div className="flex gap-3 pt-3 border-t border-border">
           {project.links.live && (
             <a
               href={project.links.live}
@@ -94,7 +94,7 @@ export function ProjectCard({ project, index, isHighlighted }: ProjectCardProps)
               href={project.links.github}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-sm text-gray-600 hover:text-gray-900 flex items-center gap-1"
+              className="text-sm text-muted-foreground hover:text-foreground flex items-center gap-1"
             >
               <GithubIcon className="w-4 h-4" />
               GitHub

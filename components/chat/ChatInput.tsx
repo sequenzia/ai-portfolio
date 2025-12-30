@@ -49,7 +49,7 @@ export function ChatInput({
       onSubmit={onSubmit}
       data-chat-form
       className={cn(
-        'flex items-end gap-2 px-4 py-3 border-t border-gray-200 bg-white',
+        'flex items-end gap-2 px-4 py-3 border-t border-border bg-background',
         className
       )}
     >
@@ -63,10 +63,10 @@ export function ChatInput({
           placeholder={placeholder}
           rows={1}
           className={cn(
-            'w-full resize-none rounded-xl border border-gray-300 px-4 py-2.5',
-            'text-sm text-gray-900 placeholder-gray-500',
+            'w-full resize-none rounded-xl border border-border bg-background px-4 py-2.5',
+            'text-sm text-foreground placeholder:text-muted-foreground',
             'focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500',
-            'disabled:bg-gray-50 disabled:text-gray-500',
+            'disabled:bg-muted disabled:text-muted-foreground',
             'transition-colors duration-150'
           )}
         />

@@ -20,7 +20,7 @@ export function BioCard(_props: BioCardProps) {
         animate={{ opacity: 1, y: 0 }}
         className="flex items-center gap-2"
       >
-        <h2 className="text-2xl font-bold text-gray-900">About Me</h2>
+        <h2 className="text-2xl font-bold text-foreground">About Me</h2>
       </motion.div>
 
       {/* Main bio card */}
@@ -44,14 +44,14 @@ export function BioCard(_props: BioCardProps) {
 
               {/* Info */}
               <div className="flex-1">
-                <h3 className="text-2xl font-bold text-gray-900">{bio.name}</h3>
-                <p className="text-primary-600 font-medium mt-1">{bio.title}</p>
-                <p className="text-gray-500 text-sm mt-1 flex items-center gap-1">
+                <h3 className="text-2xl font-bold text-foreground">{bio.name}</h3>
+                <p className="text-primary-600 dark:text-primary-400 font-medium mt-1">{bio.title}</p>
+                <p className="text-muted-foreground text-sm mt-1 flex items-center gap-1">
                   <LocationIcon className="w-4 h-4" />
                   {bio.location}
                 </p>
 
-                <p className="text-gray-700 mt-4 leading-relaxed">{bio.summary}</p>
+                <p className="text-foreground/80 mt-4 leading-relaxed">{bio.summary}</p>
 
                 {/* Social links */}
                 <div className="flex gap-3 mt-4">
@@ -61,7 +61,7 @@ export function BioCard(_props: BioCardProps) {
                       href={link.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-gray-500 hover:text-primary-600 transition-colors"
+                      className="text-muted-foreground hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
                       title={link.platform}
                     >
                       <SocialIcon icon={link.icon} className="w-5 h-5" />
@@ -80,7 +80,7 @@ export function BioCard(_props: BioCardProps) {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
       >
-        <h3 className="text-lg font-semibold text-gray-900 mb-3">Highlights</h3>
+        <h3 className="text-lg font-semibold text-foreground mb-3">Highlights</h3>
         <div className="grid gap-3">
           {bio.highlights.map((highlight, index) => (
             <motion.div
@@ -88,12 +88,12 @@ export function BioCard(_props: BioCardProps) {
               initial={{ opacity: 0, x: -10 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.3 + index * 0.1 }}
-              className="flex items-start gap-3 p-3 bg-white rounded-lg shadow-sm"
+              className="flex items-start gap-3 p-3 bg-card rounded-lg shadow-sm border border-border"
             >
               <span className="text-primary-500 mt-0.5">
                 <CheckIcon className="w-5 h-5" />
               </span>
-              <span className="text-gray-700">{highlight}</span>
+              <span className="text-foreground/80">{highlight}</span>
             </motion.div>
           ))}
         </div>

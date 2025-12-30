@@ -13,13 +13,13 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(
         ref={ref}
         className={cn(
           // Base styles
-          'rounded-card bg-white',
+          'rounded-card bg-card',
 
           // Variant styles
           {
             'shadow-card': variant === 'default',
             'shadow-elevated': variant === 'elevated',
-            'border border-gray-200': variant === 'outlined',
+            'border border-border': variant === 'outlined',
           },
 
           // Hoverable styles
@@ -44,7 +44,7 @@ export const CardHeader = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivEleme
   ({ className, ...props }, ref) => (
     <div
       ref={ref}
-      className={cn('px-6 py-4 border-b border-gray-100', className)}
+      className={cn('px-6 py-4 border-b border-border', className)}
       {...props}
     />
   )
@@ -64,7 +64,7 @@ export const CardFooter = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivEleme
   ({ className, ...props }, ref) => (
     <div
       ref={ref}
-      className={cn('px-6 py-4 border-t border-gray-100', className)}
+      className={cn('px-6 py-4 border-t border-border', className)}
       {...props}
     />
   )

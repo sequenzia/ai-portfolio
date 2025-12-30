@@ -3,7 +3,8 @@
 import { portfolioContent } from '@/lib/content/portfolio';
 import { cn } from '@/lib/utils/cn';
 import { useCanvasStore } from '@/stores/canvasStore';
-import { ChevronLeft, Home } from 'lucide-react';
+import { useThemeStore } from '@/stores/themeStore';
+import { ChevronLeft, Home, Sun, Moon } from 'lucide-react';
 
 interface MinimalHeaderProps {
   className?: string;
@@ -12,6 +13,7 @@ interface MinimalHeaderProps {
 export function MinimalHeader({ className }: MinimalHeaderProps) {
   const { bio } = portfolioContent;
   const { currentView, goBack, reset, history } = useCanvasStore();
+  const { theme, toggleTheme } = useThemeStore();
 
   const showBackButton = currentView !== 'welcome' && history.length > 0;
   const showHomeButton = currentView !== 'welcome';
@@ -58,8 +60,19 @@ export function MinimalHeader({ className }: MinimalHeaderProps) {
         </div>
       </div>
 
-      {/* Right side - status indicator */}
+      {/* Right side - theme toggle and status */}
       <div className="flex items-center gap-2">
+        <button
+          onClick={toggleTheme}
+          className="p-2 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+          title={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
+        >
+          {theme === 'light' ? (
+            <Moon className="h-4 w-4" />
+          ) : (
+            <Sun className="h-4 w-4" />
+          )}
+        </button>
         <span className="text-xs text-muted-foreground hidden md:block">
           AI Portfolio
         </span>

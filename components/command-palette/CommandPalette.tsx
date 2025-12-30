@@ -260,7 +260,7 @@ function CommandPill({ uiState, onClick, onSuggestionClick }: CommandPillProps) 
           <button
             key={label}
             onClick={() => onSuggestionClick(prompt)}
-            className="rounded-full bg-white/80 px-3 py-1.5 text-sm text-muted-foreground shadow-sm border border-border/50 hover:bg-white hover:border-border transition-colors backdrop-blur-sm"
+            className="rounded-full bg-background/80 px-3 py-1.5 text-sm text-muted-foreground shadow-sm border border-border/50 hover:bg-background hover:border-border transition-colors backdrop-blur-sm"
           >
             {label}
           </button>
@@ -271,7 +271,7 @@ function CommandPill({ uiState, onClick, onSuggestionClick }: CommandPillProps) 
       <button
         onClick={onClick}
         className={cn(
-          'flex items-center gap-3 rounded-full bg-white px-5 py-3 shadow-elevated border-2 transition-all hover:shadow-lg',
+          'flex items-center gap-3 rounded-full bg-card px-5 py-3 shadow-elevated border-2 transition-all hover:shadow-lg',
           getBorderClass()
         )}
       >
@@ -338,7 +338,7 @@ function CommandShell({
       exit={{ opacity: 0, y: 10, scale: 0.95 }}
       transition={{ duration: 0.2 }}
       className={cn(
-        'w-[90vw] max-w-2xl rounded-2xl bg-white shadow-elevated border border-border overflow-hidden',
+        'w-[90vw] max-w-2xl rounded-2xl bg-card shadow-elevated border border-border overflow-hidden',
         getBorderClass()
       )}
     >
@@ -448,7 +448,7 @@ function MobileActionBar({ uiState, currentView, onClick }: MobileActionBarProps
       exit={{ opacity: 0, y: 10 }}
       transition={{ duration: 0.2 }}
       onClick={onClick}
-      className="w-full flex items-center justify-between px-4 py-3 bg-white border-t border-border shadow-lg"
+      className="w-full flex items-center justify-between px-4 py-3 bg-card border-t border-border shadow-lg"
     >
       <div className="flex items-center gap-3">
         {getStatusIndicator()}
@@ -492,7 +492,7 @@ function MobileBottomSheet({
       animate={{ y: 0 }}
       exit={{ y: '100%' }}
       transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-      className="bg-white rounded-t-2xl shadow-lg border-t border-border"
+      className="bg-card rounded-t-2xl shadow-lg border-t border-border"
       style={{ height: '50vh', maxHeight: '50vh' }}
     >
       {/* Handle */}

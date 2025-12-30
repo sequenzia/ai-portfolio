@@ -34,8 +34,8 @@ export function SkillsMatrix({ data }: SkillsMatrixProps) {
         className="flex items-center justify-between"
       >
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Skills</h2>
-          <p className="text-gray-500 text-sm mt-1">
+          <h2 className="text-2xl font-bold text-foreground">Skills</h2>
+          <p className="text-muted-foreground text-sm mt-1">
             Technical proficiencies across different domains
           </p>
         </div>
@@ -54,10 +54,10 @@ export function SkillsMatrix({ data }: SkillsMatrixProps) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: categoryIndex * 0.1 }}
-            className="bg-white rounded-xl shadow-sm border border-gray-100 p-5"
+            className="bg-card rounded-xl shadow-sm border border-border p-5"
           >
             {/* Category header */}
-            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+            <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
               <CategoryIcon category={category.name} />
               {category.name}
             </h3>
@@ -83,7 +83,7 @@ export function SkillsMatrix({ data }: SkillsMatrixProps) {
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="text-center py-12 text-gray-500"
+          className="text-center py-12 text-muted-foreground"
         >
           No skills found matching "{data?.filter}"
         </motion.div>
@@ -94,7 +94,7 @@ export function SkillsMatrix({ data }: SkillsMatrixProps) {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.5 }}
-        className="flex flex-wrap items-center justify-center gap-4 pt-4 text-sm text-gray-500"
+        className="flex flex-wrap items-center justify-center gap-4 pt-4 text-sm text-muted-foreground"
       >
         <span>Proficiency levels:</span>
         <SkillLevelBadge level="beginner" />
@@ -128,24 +128,24 @@ function SkillRow({ skill, index, categoryIndex, isHighlighted }: SkillRowProps)
       transition={{ delay: categoryIndex * 0.1 + index * 0.05 + 0.1 }}
       className={cn(
         'flex items-center gap-4 p-2 rounded-lg',
-        isHighlighted && 'bg-primary-50 ring-1 ring-primary-200'
+        isHighlighted && 'bg-primary-50 dark:bg-primary-950 ring-1 ring-primary-200 dark:ring-primary-800'
       )}
     >
       {/* Skill name */}
       <div className="w-32 flex-shrink-0">
-        <span className="font-medium text-gray-900">{skill.name}</span>
+        <span className="font-medium text-foreground">{skill.name}</span>
       </div>
 
       {/* Progress bar */}
       <div className="flex-1">
-        <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+        <div className="h-2 bg-muted rounded-full overflow-hidden">
           <motion.div
             initial={{ width: 0 }}
             animate={{ width: levelWidth[skill.level] }}
             transition={{ delay: categoryIndex * 0.1 + index * 0.05 + 0.3, duration: 0.5 }}
             className={cn(
               'h-full rounded-full',
-              skill.level === 'beginner' && 'bg-gray-400',
+              skill.level === 'beginner' && 'bg-muted-foreground',
               skill.level === 'intermediate' && 'bg-primary-400',
               skill.level === 'advanced' && 'bg-green-500',
               skill.level === 'expert' && 'bg-yellow-500'
@@ -161,7 +161,7 @@ function SkillRow({ skill, index, categoryIndex, isHighlighted }: SkillRowProps)
 
       {/* Years */}
       {skill.yearsOfExperience && (
-        <div className="w-16 flex-shrink-0 text-right text-sm text-gray-500">
+        <div className="w-16 flex-shrink-0 text-right text-sm text-muted-foreground">
           {skill.yearsOfExperience}y
         </div>
       )}

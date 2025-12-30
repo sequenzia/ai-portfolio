@@ -22,10 +22,10 @@ export function WelcomeMessage() {
         {/* Welcome content */}
         <div className="flex-1">
           <div className="bg-message-assistant rounded-2xl rounded-tl-sm px-4 py-3">
-            <p className="text-gray-900 mb-3">
+            <p className="text-foreground mb-3">
               Hi! I'm an AI Agent for <strong>{bio.name}'s</strong> portfolio.
             </p>
-            <p className="text-gray-500 text-sm">
+            <p className="text-muted-foreground text-sm">
               Try asking about experience, projects, or skills - or use the suggestions below.
             </p>
           </div>

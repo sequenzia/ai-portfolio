@@ -26,7 +26,7 @@ export const Message = forwardRef<HTMLDivElement, MessageProps>(
             'max-w-[85%] rounded-message px-4 py-3',
             isUser
               ? 'bg-message-user text-white rounded-br-sm'
-              : 'bg-message-assistant text-gray-900 rounded-bl-sm'
+              : 'bg-message-assistant text-foreground rounded-bl-sm'
           )}
         >
           <div className="whitespace-pre-wrap text-sm leading-relaxed">
@@ -55,7 +55,7 @@ export const AssistantMessage = forwardRef<HTMLDivElement, { content: string }>(
         </div>
         {/* Message */}
         <div className="flex-1 max-w-[85%]">
-          <div className="bg-message-assistant text-gray-900 rounded-message rounded-tl-sm px-4 py-3">
+          <div className="bg-message-assistant text-foreground rounded-message rounded-tl-sm px-4 py-3">
             <div className="whitespace-pre-wrap text-sm leading-relaxed">
               {content}
             </div>
