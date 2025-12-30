@@ -1,0 +1,1 @@
+export { WorkspaceCanvas } from './WorkspaceCanvas';

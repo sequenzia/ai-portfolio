@@ -1,19 +1,26 @@
-import { type ReactNode } from 'react';
-import { Header } from './Header';
+'use client';
 
-interface AppLayoutProps {
-  children: ReactNode;
-}
+import { WorkspaceCanvas } from '@/components/workspace';
+import { CommandPalette } from '@/components/command-palette';
+import { MinimalHeader } from './MinimalHeader';
 
-export function AppLayout({ children }: AppLayoutProps) {
+/**
+ * Canvas-first layout architecture:
+ * - Canvas as the base layer (edge-to-edge)
+ * - Command Palette as centered pill overlay at bottom
+ * - Minimal header for branding/navigation
+ */
+export function AppLayout() {
   return (
-    <div className="flex h-screen flex-col bg-surface-canvas">
-      <Header />
-      <div className="flex-1 overflow-hidden">
-        <div className="h-full max-w-3xl mx-auto bg-surface-chat">
-          {children}
-        </div>
-      </div>
+    <div className="relative h-screen w-screen overflow-hidden bg-surface-canvas">
+      {/* Minimal header */}
+      <MinimalHeader className="absolute top-0 left-0 right-0 z-40" />
+
+      {/* Canvas base layer */}
+      <WorkspaceCanvas className="h-full w-full pt-14" />
+
+      {/* Command Palette overlay */}
+      <CommandPalette />
     </div>
   );
 }
